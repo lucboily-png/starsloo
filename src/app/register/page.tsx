@@ -87,25 +87,25 @@ console.log("Business insert result:", businessData, businessError);
 	  
   return (
     <div
-      className="register-container"
-      style={{
-        minHeight: "90vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(to bottom right, #e0f0ff, #c2e0ff)",
-        padding: "100px",
-        fontFamily: "'Inter', sans-serif",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: "1000px",
-          position: "relative",
-		  
-        }}
-      >
+  className="register-container"
+  style={{
+    minHeight: "60vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "linear-gradient(to bottom, #b2d2ed, #98c1e3)",
+    padding: "20px",
+  }}
+>
+  <div
+    style={{
+      width: "100%",        // prend toute la largeur possible
+      maxWidth: "500px",    // limite sur desktop / tablette
+      minWidth: "300px",    // minimum sur mobile
+      padding: "20px",
+      position: "relative",
+    }}
+  >
 	  
 	  
         {/* Toggle Langue */}
@@ -114,7 +114,7 @@ console.log("Business insert result:", businessData, businessError);
             type="button"
             onClick={() => setLang(lang === "FR" ? "EN" : "FR")}
             style={{
-              padding: "6px 14px",
+              padding: "40px 24px",
               borderRadius: "20px",
               border: "none",
               backgroundColor: "#1e3a8a",
@@ -272,7 +272,7 @@ console.log("Business insert result:", businessData, businessError);
   {lang === "FR" ? "Retour" : "Home"}
 </button>
 
- {/* MARKETING SECTIONS HERO STYLE */}
+ {/* MARKETING SECTIONS HERO STYLE 
       <section className="marketing-hero-sections">
         <div className="marketing-card">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
@@ -291,7 +291,7 @@ console.log("Business insert result:", businessData, businessError);
           <h3>{lang === 'FR' ? 'Facile à utiliser' : 'Easy to Use'}</h3>
           <p>{lang === 'FR' ? 'Notre plateforme est intuitive et rapide, sans tracas techniques.' : 'Our platform is intuitive and hassle-free.'}</p>
 		</div>
-      </section>
+      </section>*/}
 
 <section className="marketing-hero-sections">
 <div style={{ display: 'flex', justifyContent: 'center', padding: '5px 4px 5px 5px' }}>
