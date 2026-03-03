@@ -1,4 +1,6 @@
 // src/app/api/stripe-webhook/route.ts
+// src/app/api/stripe-webhook/route.ts
+
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 
@@ -81,11 +83,18 @@ export async function POST(req: Request) {
         }
 
         // --- Calcul end_date ---
-        const endDate = subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000).toISOString()
-          : subscription.items.data.length > 0 && subscription.items.data[0].current_period_end
-          ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
-          : null;
+        Failed to compile.
+./src/app/api/stripe-webhook/route.ts:86:38
+Type error: Property 'current_period_end' does not exist on type 'Subscription'.
+  84 |
+  85 |         // --- Calcul end_date ---
+> 86 |         const endDate = subscription.current_period_end
+     |                                      ^
+  87 |           ? new Date(subscription.current_period_end * 1000).toISOString()
+  88 |           : subscription.items.data.length > 0 && subscription.items.data[0].current_period_end
+  89 |           ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
+Next.js build worker exited with code: 1 and signal: null
+Error: Command "npm run build" exited with 1
 
         console.log("📦 Updating Supabase:", { subscriptionId: subscription.id, status, endDate });
 

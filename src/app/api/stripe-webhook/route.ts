@@ -83,11 +83,15 @@ export async function POST(req: Request) {
         }
 
         // --- Calcul end_date ---
-        const endDate = subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000).toISOString()
-          : subscription.items.data.length > 0 && subscription.items.data[0].current_period_end
-          ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
-          : null;
+        // 🔹 Calcul end_date safely
+const endDate =
+  // 1️⃣ Essayer sur subscription directement (TS ne connaît pas, donc cast en any)
+  (subscription as any).current_period_end
+    ? new Date((subscription as any).current_period_end * 1000).toISOString()
+    : // 2️⃣ Sinon vérifier le premier item
+    subscription.items.data.length > 0 && subscription.items.data[0].current_period_end
+    ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
+    : null;
 
         console.log("📦 Updating Supabase:", { subscriptionId: subscription.id, status, endDate });
 
