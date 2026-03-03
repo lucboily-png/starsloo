@@ -47,6 +47,9 @@ export default function RegisterPage() {
         .select()
         .single();
 
+console.log("Business error:", businessError)
+
+
       if (businessError || !businessData) throw new Error(businessError?.message || "Erreur business.");
 
       const { error: profileError } = await supabase.from("profiles").insert({
@@ -54,6 +57,9 @@ export default function RegisterPage() {
         email,
         business_id: businessData.id,
       });
+	  
+	  console.log("Profile error:", profileError)
+	  
       if (profileError) throw new Error(profileError.message);
 
       const { error: subscriptionError } = await supabase.from("subscriptions").insert({
@@ -64,12 +70,15 @@ export default function RegisterPage() {
         sms_max: 20,
         status: "trial",
       });
+	  
+	  console.log("Subscription error:", subscriptionError)
       if (subscriptionError) throw new Error(subscriptionError.message);
 
+	setLoading(false);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || (lang === "FR" ? "Erreur inconnue" : "Unknown error"));
-      setLoading(false);
+      
     }
   };
 

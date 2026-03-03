@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation"
 import { supabase } from "@/lib/supabase";
 import "./register.css";
 import Image from 'next/image'
@@ -46,6 +47,9 @@ export default function RegisterPage() {
         .select()
         .single();
 
+console.log("Business error:", businessError)
+
+
       if (businessError || !businessData) throw new Error(businessError?.message || "Erreur business.");
 
       const { error: profileError } = await supabase.from("profiles").insert({
@@ -53,6 +57,9 @@ export default function RegisterPage() {
         email,
         business_id: businessData.id,
       });
+	  
+	  console.log("Profile error:", profileError)
+	  
       if (profileError) throw new Error(profileError.message);
 
       const { error: subscriptionError } = await supabase.from("subscriptions").insert({
@@ -63,6 +70,8 @@ export default function RegisterPage() {
         sms_max: 20,
         status: "trial",
       });
+	  
+	  console.log("Subscription error:", subscriptionError)
       if (subscriptionError) throw new Error(subscriptionError.message);
 
       router.push("/dashboard");
