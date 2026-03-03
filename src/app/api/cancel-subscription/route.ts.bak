@@ -69,6 +69,11 @@ export async function POST(req: NextRequest) {
       console.log('❌ Supabase update error:', updateError)
       return NextResponse.json({ error: 'Supabase update failed' }, { status: 500 })
     }
+	
+	if (subscription.status === "incomplete_expired") {
+  console.log("⚠️ Abonnement expiré, rien à annuler ou créer, on doit créer un nouvel abonnement.");
+  return new Response("Subscription expired, please create a new one", { status: 400 });
+}
 
     console.log('🎉 Done')
 
