@@ -70,6 +70,9 @@ if (error) {
   console.log("✅ Supabase upsert success:", subscriptionId);
 }
 
+break;
+}
+
       // ==============================
       // SUBSCRIPTION UPDATED
       // ==============================

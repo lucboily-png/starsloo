@@ -44,25 +44,31 @@ export async function POST(req: Request) {
           smsMax,
         });
 
-        const { error } = await supabase
+const { error } = await supabase
   .from("subscriptions")
-  .upsert({
-    stripe_subscription_id: subscriptionId,
-    business_id: businessId,
-    plan_name: planName,
-    status: "active",
-    sms_max: smsMax,
-    sms_sent: 0,
-    start_date: new Date().toISOString(),
-    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-  }, { onConflict: "stripe_subscription_id" });
-          .eq("stripe_subscription_id", subscriptionId);
+  .upsert(
+    {
+      stripe_subscription_id: subscriptionId,
+      business_id: businessId,
+      plan_name: planName,
+      status: "active",
+      sms_max: smsMax,
+      sms_sent: 0,
+      start_date: new Date().toISOString(),
+      end_date: new Date(
+        Date.now() + 30 * 24 * 60 * 60 * 1000
+      ).toISOString(),
+    },
+    {
+      onConflict: "stripe_subscription_id",
+    }
+  );
 
-        if (error) console.error("❌ Supabase checkout error:", error);
-        else console.log("✅ Supabase updated for subscription:", subscriptionId);
-
-        break;
-      }
+if (error) {
+  console.error("❌ Supabase upsert error:", error);
+} else {
+  console.log("✅ Supabase upsert success:", subscriptionId);
+}
 
       // ==============================
       // SUBSCRIPTION UPDATED
