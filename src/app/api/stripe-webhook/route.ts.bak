@@ -1,5 +1,4 @@
 // src/app/api/stripe-webhook/route.ts
-// src/app/api/stripe-webhook/route.ts
 
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
@@ -46,15 +45,17 @@ export async function POST(req: Request) {
         });
 
         const { error } = await supabase
-          .from("subscriptions")
-          .update({
-            plan_name: planName,
-            status: "active",
-            sms_max: smsMax,
-            sms_sent: 0,
-            start_date: new Date().toISOString(),
-            end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Exemple : 30 jours
-          })
+  .from("subscriptions")
+  .upsert({
+    stripe_subscription_id: subscriptionId,
+    business_id: businessId,
+    plan_name: planName,
+    status: "active",
+    sms_max: smsMax,
+    sms_sent: 0,
+    start_date: new Date().toISOString(),
+    end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+  }, { onConflict: "stripe_subscription_id" });
           .eq("stripe_subscription_id", subscriptionId);
 
         if (error) console.error("❌ Supabase checkout error:", error);
