@@ -63,9 +63,16 @@ export async function POST(req: Request) {
         else if (subscription.status === "incomplete_expired") status = "canceled";
         else if (subscription.cancel_at_period_end) status = "canceling";
 
-        const endDate = subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000).toISOString()
-          : null;
+        const subscription = event.data.object as any
+
+let status = subscription.status
+
+if (subscription.status === "active") status = "active"
+else if (subscription.cancel_at_period_end) status = "canceling"
+
+const endDate = subscription.current_period_end
+  ? new Date(subscription.current_period_end * 1000).toISOString()
+  : null
 
         const { data, error } = await supabase
           .from("subscriptions")
