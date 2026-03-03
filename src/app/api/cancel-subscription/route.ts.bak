@@ -46,9 +46,9 @@ export async function POST(req: NextRequest) {
     console.log('🔄 Updating Stripe...')
 
     const updatedStripeSub = await stripe.subscriptions.update(
-      subscription.stripe_subscription_id,
-      { cancel_at_period_end: true }
-    )
+  subscriptionId,
+  { cancel_at_period_end: true }
+) as Stripe.Subscription
 
     console.log('✅ Stripe updated:', updatedStripeSub.id)
 
