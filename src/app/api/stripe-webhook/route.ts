@@ -2,7 +2,7 @@
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2023-10-16" });
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,29 +22,41 @@ export async function POST(req: Request) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
 
-    console.log("🔥 WEBHOOK TOUCHÉ", event.type);
+    console.log("🔥 WEBHOOK RECEIVED:", event.type);
 
     switch (event.type) {
-
       // ==============================
-      // CHECKOUT COMPLETED
+      // CHECKOUT SESSION COMPLETED
       // ==============================
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
 
         const subscriptionId = session.subscription as string;
+        const businessId = session.metadata?.businessId;
+        const planName = session.metadata?.planName;
+        const smsMax = parseInt(session.metadata?.smsMax || "0", 10);
+
+        console.log("📦 Checkout completed:", {
+          subscriptionId,
+          businessId,
+          planName,
+          smsMax,
+        });
 
         const { error } = await supabase
           .from("subscriptions")
           .update({
+            plan_name: planName,
             status: "active",
+            sms_max: smsMax,
+            sms_sent: 0,
             start_date: new Date().toISOString(),
+            end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // Exemple : 30 jours
           })
           .eq("stripe_subscription_id", subscriptionId);
 
-        if (error) {
-          console.error("❌ Supabase checkout error:", error);
-        }
+        if (error) console.error("❌ Supabase checkout error:", error);
+        else console.log("✅ Supabase updated for subscription:", subscriptionId);
 
         break;
       }
@@ -54,20 +66,11 @@ export async function POST(req: Request) {
       // ==============================
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-
-        console.log(
-          "🔄 Subscription updated:",
-          subscription.id,
-          subscription.status
-        );
+        console.log("🔄 Subscription updated:", subscription.id, subscription.status);
 
         // --- Mapping status ---
         let status: string;
-
-        if (
-          subscription.status === "canceled" ||
-          subscription.status === "incomplete_expired"
-        ) {
+        if (subscription.status === "canceled" || subscription.status === "incomplete_expired") {
           status = "canceled";
         } else if (subscription.cancel_at_period_end) {
           status = "canceling";
@@ -77,32 +80,28 @@ export async function POST(req: Request) {
           status = subscription.status;
         }
 
-        // --- End date ---
-       const endDate =
-  subscription.items.data.length > 0 &&
-  subscription.items.data[0].current_period_end
-    ? new Date(
-        subscription.items.data[0].current_period_end * 1000
-      ).toISOString()
-    : null;
+        // --- Calcul end_date ---
+        const endDate = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : subscription.items.data.length > 0 && subscription.items.data[0].current_period_end
+          ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
+          : null;
+
+        console.log("📦 Updating Supabase:", { subscriptionId: subscription.id, status, endDate });
 
         const { error } = await supabase
           .from("subscriptions")
-          .update({
-            status,
-            end_date: endDate,
-          })
+          .update({ status, end_date: endDate })
           .eq("stripe_subscription_id", subscription.id);
 
-        if (error) {
-          console.error("❌ Supabase subscription.updated error:", error);
-        }
+        if (error) console.error("❌ Supabase subscription.updated error:", error);
+        else console.log("✅ Supabase updated for subscription:", subscription.id);
 
         break;
       }
 
       default:
-        console.log("ℹ️ Event non géré:", event.type);
+        console.log("ℹ️ Event not handled:", event.type);
     }
   } catch (err) {
     console.error("❌ Webhook error:", err);
