@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation"
 import { supabase } from "@/lib/supabase";
 import "./register.css";
+import Image from 'next/image'
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,62 +21,47 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
+const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+const isEnglish = pathname.startsWith("/en");
+
+  const logoSrc = isEnglish
+    ? "/images/logo_en.png"
+    : "/images/logo.png";
+
+  const altText = isEnglish
+    ? "Starloo Logo"
+    : "Logo Starloo";
+
     try {
-      // 1️⃣ Création utilisateur
-      const { data: signUpData, error: signUpError } =
-        await supabase.auth.signUp({
-          email,
-          password,
-        });
-
-      if (signUpError) {
-        setError(signUpError.message);
-        setLoading(false);
-        return;
-      }
-
-      if (!signUpData.user) {
-        setError(lang === "FR" ? "Utilisateur non créé." : "User not created.");
-        setLoading(false);
-        return;
-      }
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+	  console.log("SignUp result:", signUpData, signUpError);
+	  
+      if (signUpError) throw new Error(signUpError.message);
+      if (!signUpData.user) throw new Error(lang === "FR" ? "Utilisateur non créé." : "User not created.");
 
       const userId = signUpData.user.id;
 
-      // 2️⃣ Création business
       const { data: businessData, error: businessError } = await supabase
         .from("businesses")
-        .insert({
-          owner_id: userId,
-          name: businessName,
-        })
+        .insert({ owner_id: userId, name: businessName })
         .select()
         .single();
 
-console.log("Business error:", businessError)
+console.log("Business insert result:", businessData, businessError);
 
-      if (businessError || !businessData) {
-        setError(businessError?.message || "Erreur business.");
-        setLoading(false);
-        return;
-      }
 
-      // 3️⃣ Création profile AVEC business_id
+      if (businessError || !businessData) throw new Error(businessError?.message || "Erreur business.");
+
       const { error: profileError } = await supabase.from("profiles").insert({
         id: userId,
         email,
         business_id: businessData.id,
       });
+	  
+	  console.log("Profile insert result:", profileError);
+	  
+      if (profileError) throw new Error(profileError.message);
 
-console.log("Profile error:", profileError)
-
-      if (profileError) {
-        setError(profileError.message);
-        setLoading(false);
-        return;
-      }
-
-      // 4️⃣ Création abonnement Trial 20 SMS
       const { error: subscriptionError } = await supabase.from("subscriptions").insert({
         user_id: userId,
         business_id: businessData.id,
@@ -85,77 +71,81 @@ console.log("Profile error:", profileError)
         status: "trial",
 		stripe_subscription_id: null
       });
+	  
+	  console.log("Subscription insert result:", subscriptionError);
+      if (subscriptionError) throw new Error(subscriptionError.message);
 
-console.log("Subscription error:", subscriptionError)
-
-      if (subscriptionError) {
-        setError(subscriptionError.message);
-        setLoading(false);
-        return;
-      }
-
-      // 5️⃣ Redirection dashboard
-	  setLoading(false);
+	setLoading(false);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || (lang === "FR" ? "Erreur inconnue" : "Unknown error"));
+      
     }
   };
 
+ 
+	  
   return (
     <div
       className="register-container"
       style={{
-        minHeight: "60vh",
-		minWidth: "100vh",
+        minHeight: "90vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(to bottom, #b2d2ed, #98c1e3)",
-        padding: "20px",
+        background: "linear-gradient(to bottom right, #e0f0ff, #c2e0ff)",
+        padding: "100px",
+        fontFamily: "'Inter', sans-serif",
       }}
     >
-      <div style={{ width: "100%", maxWidth: "400px", position: "relative" }}>
+      <div
+        style={{
+          width: "100%",
+          maxWidth: "1000px",
+          position: "relative",
+		  
+        }}
+      >
+	  
+	  
         {/* Toggle Langue */}
-        <div style={{ position: "absolute", top: 0, right: 0 }}>
-          {lang === "FR" && (
-            <button
-              type="button"
-              onClick={() => setLang("EN")}
-              style={{
-                padding: "5px 12px",
-                borderRadius: "5px",
-                border: "none",
-                backgroundColor: "#1e3a8a",
-                color: "#fff",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              EN
-            </button>
-          )}
-          {lang === "EN" && (
-            <button
-              type="button"
-              onClick={() => setLang("FR")}
-              style={{
-                padding: "5px 12px",
-                borderRadius: "5px",
-                border: "none",
-                backgroundColor: "#1e3a8a",
-                color: "#fff",
-                cursor: "pointer",
-                fontWeight: "bold",
-              }}
-            >
-              FR
-            </button>
-          )}
+        <div style={{ position: "absolute", top: "-40px", right: 0 }}>
+          <button
+            type="button"
+            onClick={() => setLang(lang === "FR" ? "EN" : "FR")}
+            style={{
+              padding: "6px 14px",
+              borderRadius: "20px",
+              border: "none",
+              backgroundColor: "#1e3a8a",
+              color: "#fff",
+              fontWeight: "600",
+              cursor: "pointer",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+              transition: "0.2s",
+            }}
+          >
+            {lang === "FR" ? "ENGLISH" : "FRANCAIS"}
+          </button>
         </div>
 
-        <h1 style={{ textAlign: "center", marginBottom: "20px", color: "#1e3a8a" }}>
-          {lang === "FR" ? "Créer un compte" : "Create Account"}
+        <h1
+          style={{
+            textAlign: "center",
+            marginBottom: "25px",
+            color: "#1e3a8a",
+            fontSize: "30px",
+            fontWeight: "bold",
+          }}
+        >
+		
+		{/* LOGO */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '0px 0px 50px' }}>
+        <Image src="/images/logo.png" alt="Logo" width={284} height={120} />
+      </div>
+	
+	  
+          {lang === "FR" ? "Créer votre compte" : "Create your Account"}
         </h1>
 
         <form
@@ -163,28 +153,35 @@ console.log("Subscription error:", subscriptionError)
           style={{
             display: "flex",
             flexDirection: "column",
-            gap: "15px",
+            gap: "20px",
             backgroundColor: "#ffffff",
-            padding: "30px",
-            borderRadius: "10px",
-            boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+            padding: "50px",
+            borderRadius: "15px",
+            boxShadow: "0 12px 24px rgba(0,0,0,0.12)",
           }}
         >
-          <label>{lang === "FR" ? "Email" : "Email"}</label>
+          <label style={{ fontWeight: "600", color: "#333" }}>
+            {lang === "FR" ? "Email" : "Email"}
+          </label>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
             style={{
-              padding: "10px",
-              borderRadius: "5px",
+              padding: "12px",
+              borderRadius: "8px",
               border: "1px solid #ccc",
               width: "100%",
+              fontSize: "14px",
+              outline: "none",
+              transition: "0.2s",
             }}
           />
 
-          <label>{lang === "FR" ? "Mot de passe" : "Password"}</label>
+          <label style={{ fontWeight: "600", color: "#333" }}>
+            {lang === "FR" ? "Mot de passe" : "Password"}
+          </label>
           <input
             type="password"
             value={password}
@@ -192,24 +189,32 @@ console.log("Subscription error:", subscriptionError)
             required
             minLength={6}
             style={{
-              padding: "10px",
-              borderRadius: "5px",
+              padding: "12px",
+              borderRadius: "8px",
               border: "1px solid #ccc",
               width: "100%",
+              fontSize: "14px",
+              outline: "none",
+              transition: "0.2s",
             }}
           />
 
-          <label>{lang === "FR" ? "Nom de l'entreprise" : "Business Name"}</label>
+          <label style={{ fontWeight: "600", color: "#333" }}>
+            {lang === "FR" ? "Nom de l'entreprise" : "Business Name"}
+          </label>
           <input
             type="text"
             value={businessName}
             onChange={(e) => setBusinessName(e.target.value)}
             required
             style={{
-              padding: "10px",
-              borderRadius: "5px",
+              padding: "12px",
+              borderRadius: "8px",
               border: "1px solid #ccc",
               width: "100%",
+              fontSize: "14px",
+              outline: "none",
+              transition: "0.2s",
             }}
           />
 
@@ -219,15 +224,23 @@ console.log("Subscription error:", subscriptionError)
             type="submit"
             disabled={loading}
             style={{
-              padding: "12px",
-              borderRadius: "5px",
+              padding: "14px",
+              borderRadius: "10px",
               border: "none",
               backgroundColor: "#ff6600",
               color: "#fff",
-              fontWeight: "bold",
+              fontWeight: "700",
               cursor: "pointer",
+              fontSize: "16px",
               marginTop: "10px",
+              transition: "0.2s",
             }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "#e65500")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "#ff6600")
+            }
           >
             {loading
               ? lang === "FR"
@@ -237,7 +250,65 @@ console.log("Subscription error:", subscriptionError)
               ? "S'inscrire"
               : "Sign Up"}
           </button>
+		  
         </form>
+		
+		<button
+  onClick={() => router.push("/")}
+  style={{
+    position: "absolute",  // pour le placer en haut à gauche ou droite
+    bottom: "-5px",
+    right: "20px",
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "none",
+    backgroundColor: "#1e3a8a",
+    color: "#fff",
+    fontWeight: "bold",
+    cursor: "pointer",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
+  }}
+>
+  {lang === "FR" ? "Retour" : "Home"}
+</button>
+
+ {/* MARKETING SECTIONS HERO STYLE */}
+      <section className="marketing-hero-sections">
+        <div className="marketing-card">
+		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          <h3>{lang === 'FR' ? 'Attirez plus de clients' : 'Attract More Customers'}</h3>
+          <p>{lang === 'FR' ? 'Utilisez les avis pour améliorer votre visibilité et booster vos ventes.' : 'Leverage reviews to boost visibility and sales.'}</p>
+        </div>
+
+        <div className="marketing-card">
+		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          <h3>{lang === 'FR' ? 'Gagnez en crédibilité' : 'Gain Credibility'}</h3>
+          <p>{lang === 'FR' ? 'Les avis positifs renforcent la confiance de vos clients potentiels.' : 'Positive reviews build trust with potential clients.'}</p>
+        </div>
+
+        <div className="marketing-card">
+		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          <h3>{lang === 'FR' ? 'Facile à utiliser' : 'Easy to Use'}</h3>
+          <p>{lang === 'FR' ? 'Notre plateforme est intuitive et rapide, sans tracas techniques.' : 'Our platform is intuitive and hassle-free.'}</p>
+		</div>
+      </section>
+
+<section className="marketing-hero-sections">
+<div style={{ display: 'flex', justifyContent: 'center', padding: '5px 4px 5px 5px' }}>
+
+	  </div>
+	  </section>
+	   
+	           <div className="hero-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+		
+		
+      {/* FOOTER */}
+      <div className="home-footer">
+        <p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+      </div>
+
       </div>
     </div>
   );
