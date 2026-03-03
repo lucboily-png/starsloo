@@ -1,0 +1,66 @@
+"use client";
+
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+
+const PRICES = [
+  { id: "price_1T1cGEDjTyAwEDKfwITuwIpA", name: "Plan Basique", amount: 2995 },
+  { id: "price_2", name: "Plan Pro", amount: 4495 },
+];
+
+export default function PricingPage() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleCheckout = async (priceId: string) => {
+    setLoading(true);
+    setError("");
+    try {
+      const session = await supabase.auth.getSession();
+      const token = session.data.session?.access_token;
+      if (!token) {
+        setError("Vous devez être connecté pour acheter un plan.");
+        setLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ priceId }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        setError(data.error || "Erreur lors de la création du checkout");
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="pricing-container">
+      <h1>Choisissez votre plan</h1>
+      {PRICES.map((plan) => (
+        <div key={plan.id} className="plan-card">
+          <h2>{plan.name}</h2>
+          <p>${(plan.amount / 100).toFixed(2)}</p>
+          <button onClick={() => handleCheckout(plan.id)} disabled={loading}>
+            {loading ? "Chargement..." : "Choisir ce plan"}
+          </button>
+        </div>
+      ))}
+      {error && <p className="error">{error}</p>}
+    </div>
+  );
+}

@@ -1,0 +1,31 @@
+import { NextApiRequest, NextApiResponse } from 'next'
+import Stripe from 'stripe'
+import { supabase } from '../../../lib/supabase'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2022-11-15' })
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+
+  const { subscriptionId, businessId } = req.body
+  if (!subscriptionId || !businessId) return res.status(400).json({ error: 'Missing subscriptionId or businessId' })
+
+  try {
+    // 🔹 Mark subscription to cancel at period end
+    const updatedSub = await stripe.subscriptions.update(subscriptionId, {
+      cancel_at_period_end: true
+    })
+
+    // 🔹 Update Supabase subscription status
+    const { error } = await supabase
+      .from('subscriptions')
+      .update({ status: 'canceling' }) // nouveau statut temporaire
+      .eq('business_id', businessId)
+
+    if (error) return res.status(500).json({ error: error.message })
+
+    res.status(200).json({ success: true, updatedSub })
+  } catch (err: any) {
+    res.status(500).json({ error: err.message })
+  }
+}

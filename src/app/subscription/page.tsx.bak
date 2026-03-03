@@ -1,0 +1,18 @@
+"use client"
+
+import Link from "next/link"
+
+export default function SubscriptionPage() {
+  return (
+    <div className="p-10 max-w-md mx-auto">
+      <h1 className="text-2xl mb-4">Subscription</h1>
+      <p>Aucune subscription trouvée pour le moment.</p>
+      <Link
+        href="/dashboard"
+        className="mt-4 inline-block bg-black text-white p-2"
+      >
+        Aller au Dashboard
+      </Link>
+    </div>
+  )
+}

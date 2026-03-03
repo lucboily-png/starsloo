@@ -1,0 +1,109 @@
+import { NextRequest, NextResponse } from 'next/server'
+import Stripe from 'stripe'
+import { createClient } from '@supabase/supabase-js'
+
+export const runtime = 'nodejs'
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: '2022-11-15',
+})
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
+
+export async function POST(req: Request) {
+  const body = await req.text();
+  const signature = req.headers.get("stripe-signature")!
+
+  let event: Stripe.Event
+  try {
+    event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    )
+	
+	  console.log("🔥 WEBHOOK TOUCHÉ", event.type); // <-- ça doit s'afficher
+  } catch (err) {
+    console.error("❌ Webhook error:", err);
+    return new Response("Webhook error", { status: 400 });
+  }
+
+
+  let subscription: Stripe.Subscription | null = null
+  let businessId: string | null = null
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as Stripe.Checkout.Session
+    businessId = session.metadata?.businessId || null
+    if (!businessId) return NextResponse.json({ error: 'Missing businessId' }, { status: 400 })
+    subscription = await stripe.subscriptions.retrieve(session.subscription as string)
+  }
+
+  if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
+    subscription = event.data.object as Stripe.Subscription
+  }
+
+  if (!subscription) return NextResponse.json({ error: 'No subscription found' }, { status: 400 })
+
+  // 🔹 Récupérer businessId si absent
+  if (!businessId) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('business_id')
+      .eq('stripe_customer_id', subscription.customer as string)
+      .single()
+    businessId = profile?.business_id || null
+    if (!businessId) return NextResponse.json({ error: 'Profile not found' }, { status: 400 })
+  }
+
+  // 🔹 Déterminer statut et end_date
+  let newStatus = subscription.status
+  let newEndDate: Date | null = null
+
+  if (event.type === 'customer.subscription.deleted') {
+    newStatus = 'canceled'
+    newEndDate = new Date() // Annulation immédiate
+  } else if (subscription.cancel_at_period_end) {
+    newStatus = 'canceling'
+    newEndDate = new Date(subscription.current_period_end * 1000) // Timestamp Stripe → ms
+  } else if (subscription.status === 'past_due' || subscription.status === 'unpaid') {
+    newStatus = 'past_due'
+    newEndDate = new Date(subscription.current_period_end * 1000)
+  } else if (subscription.status === 'trialing') {
+    newStatus = 'trial'
+    newEndDate = new Date(subscription.trial_end! * 1000)
+  } else if (subscription.status === 'active') {
+    newStatus = 'active'
+    newEndDate = new Date(subscription.current_period_end * 1000)
+  }
+
+  // 🔹 Préparer update Supabase
+  const updates: any = {
+    status: newStatus,
+    stripe_subscription_id: subscription.id,
+    stripe_customer_id: subscription.customer as string,
+    updated_at: new Date(),
+    end_date: newEndDate,
+  }
+
+  // 🔹 Mettre à jour plan et sms_max si checkout
+  if (event.type === 'checkout.session.completed') {
+    const priceId = subscription.items.data[0].price.id
+    if (priceId === 'price_1T5e6CEyGK0Xf3bphUQDpxig') { updates.plan_name = 'Bronze'; updates.sms_max = 250; updates.sms_sent = 0 }
+    if (priceId === 'price_1T5e7KEyGK0Xf3bpV6yhZEvKt') { updates.plan_name = 'Argent'; updates.sms_max = 750; updates.sms_sent = 0 }
+    if (priceId === 'price_1T5e9REyGK0Xf3bpasnTX12f') { updates.plan_name = 'Or'; updates.sms_max = 2000; updates.sms_sent = 0 }
+  }
+
+  const { error } = await supabase
+    .from('subscriptions')
+    .update(updates)
+    .eq('business_id', businessId)
+
+  if (error) console.error('❌ Supabase update error:', error)
+  else console.log(`✅ Subscription updated for ${subscription.id}: ${newStatus}, end_date: ${newEndDate}`)
+
+  return NextResponse.json({ received: true })
+}

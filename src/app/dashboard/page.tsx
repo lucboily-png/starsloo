@@ -1,0 +1,442 @@
+/* src/app/dashboard/page.tsx */
+
+'use client'
+
+import './dashboard.css'
+import { useEffect, useState } from 'react'
+import { supabase } from '../../lib/supabase'
+import PlanModal from '@/components/PlanModal'
+import Image from 'next/image'
+import { usePathname } from "next/navigation";
+
+type Subscription = {
+  plan_name: string
+  sms_sent: number
+  sms_max: number
+  status: string
+  stripe_subscription_id?: string
+}
+
+export default function DashboardPage() {
+  const [business, setBusiness] = useState<any>(null)
+  const [subscription, setSubscription] = useState<Subscription | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [clientName, setClientName] = useState('')
+  const [clientPhone, setClientPhone] = useState('')
+  const [lang, setLang] = useState<'FR'|'EN'>('FR')
+  const [showPlanModal, setShowPlanModal] = useState(false)
+  const [showContactForm, setShowContactForm] = useState(false)
+  const [contactName, setContactName] = useState('')
+  const [contactBusiness, setContactBusiness] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactMessage, setContactMessage] = useState('')
+
+  const [link, setLink] = useState('')
+  const [smsTemplateFR, setSmsTemplateFR] = useState('')
+  const [smsTemplateEN, setSmsTemplateEN] = useState('')
+  
+
+  const pathname = usePathname();
+
+  // Si l'URL contient /en → logo anglais
+  const isEnglish = pathname.startsWith("/en");
+
+  const logoSrc = isEnglish
+    ? "/images/logo_en.png"
+    : "/images/logo.png";
+	
+
+  const altText = isEnglish
+    ? "Starloo Logo"
+    : "Logo Starloo";
+
+  // 🔹 Fetch business + subscription
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) throw new Error(lang==='FR' ? 'Utilisateur non connecté' : 'User not logged in')
+
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('business_id')
+          .eq('id', user.id)
+          .single()
+        if (!profile || !profile.business_id) throw new Error(lang==='FR' ? 'Profil introuvable' : 'Profile not found')
+
+        const { data: biz } = await supabase
+          .from('businesses')
+          .select('id, name, link, sms_template_fr, sms_template_en')
+          .eq('id', profile.business_id)
+          .single()
+        if (!biz) throw new Error(lang==='FR' ? 'Entreprise introuvable' : 'Business not found')
+
+        setBusiness(biz)
+        setLink(biz.link || '')
+        setSmsTemplateFR(biz.sms_template_fr || '')
+        setSmsTemplateEN(biz.sms_template_en || '')
+
+        const { data: sub } = await supabase
+          .from('subscriptions')
+          .select('*')
+          .eq('business_id', profile.business_id)
+          .single()
+
+        if (sub) {
+          setSubscription(sub)
+          if (sub.sms_max - sub.sms_sent <= 0) setShowPlanModal(true)
+        }
+
+        setLoading(false)
+      } catch (err: any) {
+        setError(err.message)
+        setLoading(false)
+      }
+    }
+    fetchData()
+  }, [lang])
+
+  // 🔹 Send SMS
+  const sendClientSMS = async (smsLang: 'FR'|'EN') => {
+    if (!subscription || !business) return alert(lang==='FR' ? 'Entreprise ou abonnement introuvable' : 'Business or subscription not found')
+    if (!clientName || !clientPhone) return alert(lang==='FR' ? 'Veuillez entrer prénom et téléphone' : 'Please enter client name and phone')
+
+    const smsRemaining = subscription.sms_max - subscription.sms_sent
+    if (smsRemaining <= 0) {
+      setShowPlanModal(true)
+      return alert(lang==='FR' ? 'Limite de SMS atteinte, veuillez choisir un plan' : 'SMS limit reached')
+    }
+
+    const templateFR = smsTemplateFR || 'Bonjour {client_name}, découvrez notre offre sur {link} !'
+    const templateEN = smsTemplateEN || 'Hi {client_name}, check our offer on {link}!'
+    const message = (smsLang==='FR' ? templateFR : templateEN)
+      .replace('{client_name}', clientName)
+      .replace('{business_name}', business.name)
+      .replace('{link}', link)
+
+    try {
+      const response = await fetch('/api/send-sms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: clientPhone, message })
+      })
+      const data = await response.json()
+      if (!response.ok) return alert((lang==='FR' ? 'Erreur Twilio: ' : 'Twilio error: ') + data.error)
+
+      await supabase.from('subscriptions')
+        .update({ sms_sent: subscription.sms_sent + 1 })
+        .eq('business_id', business.id)
+
+      setSubscription({ ...subscription, sms_sent: subscription.sms_sent + 1 })
+      setClientName('')
+      setClientPhone('')
+
+      alert(lang==='FR' ? 'SMS envoyé !' : 'SMS sent!')
+    } catch (err: any) {
+      alert((lang==='FR' ? 'Erreur envoi SMS: ' : 'SMS sending error: ') + err.message)
+    }
+  }
+
+  if (loading) return <div className="dashboard-container">{lang==='FR' ? 'Chargement...' : 'Loading...'}</div>
+  if (error) return <div className="dashboard-container error">{error}</div>
+
+  const smsRemaining = subscription ? subscription.sms_max - subscription.sms_sent : 0
+
+  // 🔹 Cancel Subscription
+  const handleCancelSubscription = async () => {
+    if (!subscription) return
+    const confirmCancel = confirm(lang==='FR'
+      ? "Voulez-vous vraiment annuler votre abonnement à la fin de la période ?"
+      : "Are you sure you want to cancel your subscription at the end of the period?")
+    if (!confirmCancel) return
+    if (!subscription.stripe_subscription_id) return alert(lang==='FR' ? "Aucun abonnement Stripe trouvé." : "No Stripe subscription found.")
+
+    try {
+      const res = await fetch('/api/cancel-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          subscriptionId: subscription.stripe_subscription_id,
+          businessId: business.id
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Cancellation failed')
+
+      setSubscription({ ...subscription, status: 'canceling' })
+      alert(lang==='FR'
+        ? "Votre abonnement sera annulé à la fin de la période de facturation."
+        : "Your subscription will be canceled at the end of the billing period.")
+    } catch (err: any) {
+      alert(lang==='FR' ? "Erreur annulation: " : "Cancellation error: " + err.message)
+    }
+  }
+
+  // 🔹 Create Stripe checkout
+  async function handlePlanClick(plan: { priceId: string; name: string; sms: number }) {
+    if (!business) return alert('Business not found')
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId: plan.priceId,
+          businessId: business.id,
+          planName: plan.name,
+          smsMax: plan.sms
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Stripe error')
+      window.location.href = data.url
+    } catch (err: any) {
+      alert(err.message)
+    }
+  }
+
+  // 🔹 Contact Form
+  const handleContactSubmit = async (e: any) => {
+    e.preventDefault()
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: contactName,
+          business: contactBusiness,
+          email: contactEmail,
+          message: contactMessage
+        })
+      })
+      const data = await res.json()
+      if (!res.ok) return alert(data.error || 'Error sending message')
+      alert(lang==='FR' ? 'Message envoyé avec succès.' : 'Message sent successfully.')
+      setContactName('')
+      setContactBusiness('')
+      setContactEmail('')
+      setContactMessage('')
+      setShowContactForm(false)
+    } catch (err: any) {
+      alert(err.message)
+    }
+  }
+
+  const premiumCard = {
+    background:'#fff',
+    padding:'40px',
+    borderRadius:'18px',
+    boxShadow:'0 10px 30px rgba(0,0,0,0.05)',
+    transition:'0.2s'
+  }
+
+  // 🔹 Plans avec avantages
+  const plans = [
+    {
+      nameFR: 'Je veux l’essayer 🎯', nameEN: 'I want to try 🎯', color: '#cd7f32', sms: '130 SMS par mois', priceText: '$19.99/mo', priceId: 'price_1T5e6CEyGK0Xf3bphUQDpxig',
+      advantages: [
+	  'Faciliter la récoltes d’avis google et l’envoie de SMS marketing',
+        'Envoyez jusqu’à 130 SMS par mois pour vos avis Google.',
+        'Accès au tableau de bord',
+        'Support par email',
+
+      ]
+    },
+    {
+      nameFR: 'WOW 🔥', nameEN: 'WOW 🔥', color: '#c0c0c0', sms: '150 SMS par mois', priceText: '$24.99/mo', priceId: 'price_1T5e7KEyGK0Xf3bpV6yhZEvK',
+      advantages: [
+        'Pour les entreprises en croissance avec plus de volume qui veulent mettre le feu à leurs avis google',
+        'Faciliter la récoltes d’avis google et l’envoie de SMS marketing',
+        'Envoyez jusqu’à 250 SMS par mois pour vos avis Google.',
+        'Accès au tableau de bord',
+        'Support par email',
+      ]
+    },
+    {
+      nameFR: 'Incroyable 🚀', nameEN: 'Incredible 🚀', color: '#ffd700', sms: '150 SMS par mois', priceText: '$49.99/mo', priceId: 'price_1T5e9REyGK0Xf3bpasnTX12f',
+      advantages: [
+        'Idéal pour les entreprises établies et très actives qui veulent passer à une vitesse supérieur avec la récolte de leurs avis google et SMSmarketing',
+		'Envoyez jusqu’à 600 SMS par mois pour vos avis Google.',
+        'Accès au tableau de bord',
+        'Support par email',
+      ]
+    }
+  ]
+
+
+  return (
+    <div className="dashboard-container">
+         <div style={{ display: 'flex', justifyContent: 'center', padding: '25px 0' }}>
+      <Image
+        src={logoSrc}
+        alt={altText}
+        width={284}
+        height={120}
+        priority
+      />
+    </div>
+
+
+
+      {/* HEADER */}
+      <div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+        <div>
+          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700 }}>
+            {lang==='FR' ? `Bonjour ${business.name} 👋` : `Hi ${business.name} 👋`}
+          </h1>
+          <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
+            {lang==='FR' ? "Voici l'état de votre compte" : "Here is your account overview"}
+          </p>
+        </div>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
+          <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
+        </div>
+      </div>
+
+      {/* STATS CARDS */}
+      <div style={{maxWidth:'1200px', margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:'20px'}}>
+        <div className="dashboard-card">
+          <p className="dashboard-label">{lang==='FR'?'SMS Restants':'SMS Remaining'}</p>
+          <h2 className="dashboard-big-number">{smsRemaining}</h2>
+          <p style={{fontSize:'12px',color:'#777'}}>{subscription?.sms_max} total</p>
+          {subscription && (
+            <div className="dashboard-progress">
+              <div className="dashboard-progress-filled" style={{width:`${(subscription.sms_sent/subscription.sms_max)*100}%`}}/>
+            </div>
+          )}
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-label">{lang==='FR'?'SMS Envoyés':'SMS Sent'}</p>
+          <h2 className="dashboard-big-number">{subscription?.sms_sent || 0}</h2>
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-label">{lang==='FR'?'Plan Actif':'Active Plan'}</p>
+          <h2 className="dashboard-big-number">{subscription?.plan_name || '-'}</h2>
+        </div>
+        <div className="dashboard-card">
+          <p className="dashboard-label">{lang==='FR'?'Statut':'Status'}</p>
+          <h2 className="dashboard-big-number" style={{color: subscription?.status==='active'? '#16a34a':'#dc2626'}}>{subscription?.status || '-'}</h2>
+        </div>
+      </div>
+
+      {/* GOOGLE LINK / SMS TEMPLATES */}
+      <div className="dashboard-card" style={{maxWidth:'1200px', margin:'40px auto'}}>
+        <h3>{lang==='FR'?'SMS + lien URL':'Link / SMS + LINK URL'}</h3>
+        <input type="text" placeholder={lang==='FR'?'Votre message en Francais + URL de votre LIEN':'Your French message + Your link URL'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
+        <input type="text" placeholder={lang==='FR'?'Votre message en Anglais + URL de votre LIEN':'Your English message + Your link URL'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
+        <button onClick={async ()=>{
+          if(!business) return
+          const { error } = await supabase.from('businesses').update({
+            link, sms_template_fr: smsTemplateFR, sms_template_en: smsTemplateEN
+          }).eq('id', business.id)
+          if(error) alert(error.message)
+          else alert(lang==='FR'?'Modifications sauvegardées !':'Saved!')
+        }} className="dashboard-button">{lang==='FR'?'Sauvegarder':'Save'}</button>
+      </div>	  
+
+
+      {/* SEND SMS */}
+      {subscription && (
+        <div className="dashboard-card" style={{maxWidth:'1200px', margin:'0 auto 40px auto'}}>
+          <h3>{lang==='FR'?'Envoyer un SMS':'Send SMS'}</h3>
+          <div style={{display:'flex',gap:'15px',flexWrap:'wrap'}}>
+            <input type="text" placeholder={lang==='FR'?'Prénom':'First name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>
+            <input type="text" placeholder={lang==='FR'?'Téléphone':'Phone'} value={clientPhone} onChange={(e)=>setClientPhone(e.target.value)} className="dashboard-input"/>
+          </div>
+          <div style={{marginTop:'15px',display:'flex',gap:'10px'}}>
+            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">FR</button>
+            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">EN</button>
+          </div>
+        </div>
+      )}
+
+<div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700 }}>
+            {lang==='FR' ? `Choisissez votre plan ✔️` : `Chose your plan ✔️`}
+          </h1>
+		  </div>
+		  
+      {/* PLANS */}
+      <div style={{maxWidth:'1200px', margin:'60px auto', display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:'20px'}}>
+        {plans.map(plan => (
+          <div key={plan.nameFR} style={{...premiumCard, display:'flex', flexDirection:'column'}}>
+            <div style={{height:'6px', borderRadius:'6px 6px 0 0', background: plan.color, marginBottom:'10px'}}/>
+            <div style={{padding:'20px', flexGrow:1, display:'flex', flexDirection:'column'}}>
+              <h3 style={{fontSize:'22px', margin:'10px 0'}}>
+                {lang==='FR'?plan.nameFR:plan.nameEN}
+              </h3>
+              <ul style={{ fontSize:'14px', color:'#555', paddingLeft:'18px', marginBottom:'10px' }}>
+                {plan.advantages.map((adv,i)=><li key={i}>{adv}</li>)}
+              </ul>
+			  <p></p>
+			  <p style={{margin:'5px 20px', fontSize:'15px', fontWeight:700}}>{plan.sms}</p>
+              <button onClick={()=>handlePlanClick(plan)} style={{marginTop:'15px', padding:'12px 16px', borderRadius:'10px', border:'none', background:'#364899', color:'#fff', fontWeight:600, cursor:'pointer'}}>
+                {lang==='FR'?'Choisir':'Select'}
+              </button>
+            </div>
+			<p style={{margin:'10px 20px', fontSize:'20', fontWeight:700}}>{plan.priceText}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* FOOTER ACTIONS */}
+      <div style={{maxWidth:'1200px', margin:'40px auto', display:'flex', gap:'20px', justifyContent:'center'}}>
+        {subscription && (
+          <button onClick={handleCancelSubscription} className="dashboard-button2 dashboard-button-cancel">
+            {lang==='FR'?'Annuler mon abonnement':'Cancel Subscription'}
+          </button>
+        )}
+        <button onClick={()=>setShowContactForm(true)} className="dashboard-button">
+          {lang==='FR'?'Nous contacter':'Contact Us'}
+        </button>
+      </div>
+
+      {/* POPUP CONTACT */}
+      {showContactForm && (
+        <div className="dashboard-popup" onClick={()=>setShowContactForm(false)}>
+          <div className="dashboard-popup-content" onClick={e=>e.stopPropagation()}>
+            <div style={{display:'flex',justifyContent:'space-between', alignItems:'center'}}>
+              <h3 style={{margin:0, fontSize:'18px', fontWeight:600}}>{lang==='FR'?'Nous contacter':'Contact Us'}</h3>
+              <button onClick={()=>setShowContactForm(false)} style={{background:'none', border:'none', fontSize:'18px', cursor:'pointer', color:'#999'}}>×</button>
+            </div>
+            <input type="text" placeholder={lang==='FR'?'Votre nom':'Your name'} value={contactName} onChange={e=>setContactName(e.target.value)} className="dashboard-input"/>
+            <input type="text" placeholder={lang==='FR'?'Nom entreprise':'Business name'} value={contactBusiness} onChange={e=>setContactBusiness(e.target.value)} className="dashboard-input"/>
+            <input type="email" placeholder="Email" value={contactEmail} onChange={e=>setContactEmail(e.target.value)} className="dashboard-input"/>
+            <textarea placeholder="Message" rows={4} value={contactMessage} onChange={e=>setContactMessage(e.target.value)} className="dashboard-input"/>
+            <button onClick={handleContactSubmit} className="dashboard-button">{lang==='FR'?'Envoyer':'Send'}</button>
+          </div>
+        </div>
+      )}
+
+
+<section className="marketing-hero-sections">
+<div style={{ display: 'flex', justifyContent: 'center', padding: '5px 4px 5px 5px' }}>
+
+	  </div>
+	  </section>
+	   
+	           <div className="hero-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+		
+		
+      {/* FOOTER */}
+      <div className="home-footer">
+        <p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+      </div>
+
+
+   
+	  
+	  
+      {/* PLAN MODAL */}
+      {showPlanModal && (
+        <PlanModal lang={lang} onClose={()=>setShowPlanModal(false)} businessId={business?.id}/>
+      )}
+    </div>
+	 
+
+  )
+}

@@ -6,7 +6,6 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
-	"baseUrl": "src",
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -32,4 +31,13 @@
     "**/*.mts"
   ],
   "exclude": ["node_modules"]
+}
+
+
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"]
+    }
+  }
 }

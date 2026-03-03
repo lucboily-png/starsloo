@@ -1,0 +1,11 @@
+import { supabase } from './supabase'
+
+export const autoLoginTestUser = async () => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: 'luc.boily+test1@gmail.com',
+    password: 'teststripe',
+  })
+
+  if (error) console.error('Erreur auto-login:', error)
+  else console.log('Auto-login réussi:', data.user)
+}

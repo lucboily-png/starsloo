@@ -1,0 +1,113 @@
+'use client'
+
+import { useState } from 'react'
+import { loadStripe } from '@stripe/stripe-js'
+
+type Plan = {
+  name: string
+  sms: number
+  priceId: string
+}
+
+type PlanModalProps = {
+  open: boolean
+  businessId: string
+  onClose: () => void
+  onPlanSelected: (plan: { name: string; sms: number }) => void
+}
+
+// Tes 3 plans avec Price ID Stripe fictifs
+const plans: Plan[] = [
+  { name: 'Bronze', sms: 250, priceId: 'price_1T1cGEDjTyAwEDKfwITuwIpA' },
+  { name: 'Argent', sms: 750, priceId: 'price_1T1cGZDjTyAwEDKfPDssFHvp' },
+  { name: 'Or', sms: 2000, priceId: 'price_1T1cHDDjTyAwEDKfWhFmknho' },
+]
+
+// Stripe front-end
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+
+
+export default function PlanModal({ open, businessId, onClose, onPlanSelected }: PlanModalProps) {
+  const [loading, setLoading] = useState(false)
+
+  if (!open) return null
+
+const handlePlanClick = async (plan: {
+  name: string
+  sms: number
+  priceId: string
+}) => {
+  try {
+    setLoading(true)
+
+    // Appel API pour créer une session Stripe
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        priceId: plan.priceId,
+        businessId,
+        planName: plan.name,
+        smsMax: plan.sms
+      }),
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) throw new Error(data.error || 'Stripe error')
+
+    // Redirection vers Stripe Checkout
+console.log('Stripe session URL:', data.url)	
+
+    window.location.href = data.url
+
+  } catch (err: any) {
+    alert(err.message)
+    setLoading(false)
+  }
+}
+  return (
+    <div style={{
+      position: 'fixed', top:0, left:0, width:'100vw', height:'100vh',
+      background:'rgba(0,0,0,0.5)', display:'flex', justifyContent:'center', alignItems:'center', zIndex:1000
+    }}>
+      <div style={{
+        background:'#fff', padding:'30px', borderRadius:'15px', width:'90%', maxWidth:'800px'
+      }}>
+        <h2 style={{ textAlign:'center', marginBottom:'20px' }}>Choisir un plan</h2>
+        <div style={{ display:'flex', gap:'20px', justifyContent:'center', flexWrap:'wrap' }}>
+          {plans.map(plan => (
+            <div
+              key={plan.name}
+              style={{
+                borderRadius:'10px',
+                padding:'20px',
+                width:'200px',
+                textAlign:'center',
+                background: plan.name==='Bronze'
+                  ? 'linear-gradient(135deg, #cd7f32, #e0a96d)'
+                  : plan.name==='Argent'
+                  ? 'linear-gradient(135deg, #c0c0c0, #e6e6e6)'
+                  : 'linear-gradient(135deg, #ffd700, #ffe066)',
+                color: plan.name==='Bronze' ? '#fff' : '#333',
+                boxShadow:'0 6px 12px rgba(0,0,0,0.25)',
+                cursor:'pointer'
+              }}
+              onClick={() => handlePlanClick(plan)}
+            >
+              <h3>{plan.name}</h3>
+              <p style={{ fontSize:'14px', margin:'10px 0' }}>{plan.sms} SMS / mois</p>
+              <p style={{ fontSize:'12px', marginBottom:'15px' }}>
+                {plan.name==='Bronze' ? 'Idéal pour tester notre service'
+                : plan.name==='Argent' ? 'Pour les petites entreprises'
+                : 'Pour les entreprises ambitieuses'}
+              </p>
+              <button className="btn-green" disabled={loading}>{loading ? 'Chargement...' : 'Choisir'}</button>
+            </div>
+          ))}
+        </div>
+        <button onClick={onClose} className="btn-dark" style={{ marginTop:'20px' }}>Fermer</button>
+      </div>
+    </div>
+  )
+}

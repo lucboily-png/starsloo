@@ -1,0 +1,25 @@
+import { NextRequest, NextResponse } from "next/server"
+import { supabaseAdmin } from "../../../lib/supabaseAdmin" // version server avec SERVICE_ROLE_KEY
+
+export async function POST(req: NextRequest) {
+  try {
+    const { businessId } = await req.json()
+
+    const { data, error } = await supabaseAdmin
+      .from("subscriptions")
+      .insert({
+        business_id: businessId,
+        plan_name: "Bronze",
+        sms_sent: 0,
+        sms_max: 100
+      })
+      .select()
+      .single()
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 400 })
+
+    return NextResponse.json({ subscription: data })
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 })
+  }
+}
