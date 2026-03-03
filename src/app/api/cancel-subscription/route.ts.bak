@@ -43,9 +43,9 @@ export async function POST(req: NextRequest) {
     ) as Stripe.Subscription
 
     // ✅ On récupère la fin de période safely
-    const endDate = updatedStripeSub.current_period_end
-      ? new Date(updatedStripeSub.current_period_end * 1000)
-      : null
+    const endDate = updatedStripeSub['current_period_end']
+  ? new Date(updatedStripeSub['current_period_end'] * 1000)
+  : null
 
     // ⚠️ Si jamais current_period_end est null
     if (!endDate) {

@@ -37,15 +37,17 @@ export async function POST(req: NextRequest) {
     }
 
     // ⚡ Mise à jour Stripe
-    const updatedStripeSub = await stripe.subscriptions.update(
-      subscription.stripe_subscription_id,
-      { cancel_at_period_end: true }
-    ) as Stripe.Subscription
+const updatedStripeSub = await stripe.subscriptions.update(
+  subscription.stripe_subscription_id,
+  { cancel_at_period_end: true }
+)
 
-    // ✅ On récupère la fin de période safely
-    const endDate = updatedStripeSub['current_period_end']
-  ? new Date(updatedStripeSub['current_period_end'] * 1000)
-  : null
+// 🔥 On cast en any pour éviter le bug TypeScript Stripe v14+
+const stripeSub = updatedStripeSub as any
+
+const endDate = stripeSub.current_period_end
+  ? new Date(stripeSub.current_period_end * 1000)
+  : new Date()
 
     // ⚠️ Si jamais current_period_end est null
     if (!endDate) {
