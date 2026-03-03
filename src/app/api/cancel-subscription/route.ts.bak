@@ -16,12 +16,9 @@ export async function POST(req: NextRequest) {
     console.log('🚀 Cancel endpoint hit')
 
     const body = await req.json()
-    console.log('📦 Body:', body)
-
     const { businessId } = body
 
     if (!businessId) {
-      console.log('❌ Missing businessId')
       return NextResponse.json({ error: 'Missing businessId' }, { status: 400 })
     }
 
@@ -31,52 +28,50 @@ export async function POST(req: NextRequest) {
       .eq('business_id', businessId)
       .single()
 
-    console.log('📄 Subscription from DB:', subscription)
-
     if (subError || !subscription) {
-      console.log('❌ Subscription not found', subError)
       return NextResponse.json({ error: 'Subscription not found' }, { status: 404 })
     }
 
     if (!subscription.stripe_subscription_id) {
-      console.log('❌ Missing stripe_subscription_id')
       return NextResponse.json({ error: 'Missing stripe_subscription_id' }, { status: 400 })
     }
 
-    console.log('🔄 Updating Stripe...')
-
+    // ⚡ Mise à jour Stripe
     const updatedStripeSub = await stripe.subscriptions.update(
-  subscription.stripe_subscription_id,
-  { cancel_at_period_end: true }
-) as Stripe.Subscription;
+      subscription.stripe_subscription_id,
+      { cancel_at_period_end: true }
+    ) as Stripe.Subscription
 
-// Maintenant TypeScript sait que c’est une Subscription
-const endDate = new Date((updatedStripeSub.current_period_end ?? 0) * 1000);
+    // ✅ On récupère la fin de période safely
+    const endDate = updatedStripeSub.current_period_end
+      ? new Date(updatedStripeSub.current_period_end * 1000)
+      : null
 
-    console.log('✅ Stripe updated:', updatedStripeSub.id)
-
-    const endDate = new Date(updatedStripeSub.current_period_end * 1000)
+    // ⚠️ Si jamais current_period_end est null
+    if (!endDate) {
+      console.warn('⚠️ current_period_end is null, setting endDate to now')
+    }
 
     const { error: updateError } = await supabase
       .from('subscriptions')
       .update({
         status: 'canceling',
-        end_date: endDate,
+        end_date: endDate || new Date(),
         updated_at: new Date(),
       })
       .eq('business_id', businessId)
 
     if (updateError) {
-      console.log('❌ Supabase update error:', updateError)
       return NextResponse.json({ error: 'Supabase update failed' }, { status: 500 })
     }
-	
-	if (subscription.status === "incomplete_expired") {
-  console.log("⚠️ Abonnement expiré, rien à annuler ou créer, on doit créer un nouvel abonnement.");
-  return new Response("Subscription expired, please create a new one", { status: 400 });
-}
 
-    console.log('🎉 Done')
+    // Gestion abonnement expiré
+    if (subscription.status === "incomplete_expired") {
+      return new Response(
+        "Subscription expired, please create a new one",
+        { status: 400 }
+      )
+    }
 
     return NextResponse.json({ success: true })
 
