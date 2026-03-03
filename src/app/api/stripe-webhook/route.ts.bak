@@ -1,6 +1,4 @@
 // src/app/api/stripe-webhook/route.ts
-// src/app/api/stripe-webhook/route.ts
-
 
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
@@ -28,6 +26,7 @@ export async function POST(req: Request) {
     console.log("🔥 WEBHOOK RECEIVED:", event.type);
 
     switch (event.type) {
+
       // ==============================
       // CHECKOUT SESSION COMPLETED
       // ==============================
@@ -46,34 +45,27 @@ export async function POST(req: Request) {
           smsMax,
         });
 
-const { error } = await supabase
-  .from("subscriptions")
-  .upsert(
-    {
-      stripe_subscription_id: subscriptionId,
-      business_id: businessId,
-      plan_name: planName,
-      status: "active",
-      sms_max: smsMax,
-      sms_sent: 0,
-      start_date: new Date().toISOString(),
-      end_date: new Date(
-        Date.now() + 30 * 24 * 60 * 60 * 1000
-      ).toISOString(),
-    },
-    {
-      onConflict: "stripe_subscription_id",
-    }
-  );
+        // ⚡ On update la ligne Trial existante
+        const { error } = await supabase
+          .from("subscriptions")
+          .update({
+            stripe_subscription_id: subscriptionId,
+            plan_name: planName,
+            status: "active",
+            sms_max: smsMax,
+            sms_sent: 0,
+            start_date: new Date().toISOString(),
+            end_date: new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+          })
+          .eq("business_id", businessId);
 
-if (error) {
-  console.error("❌ Supabase upsert error:", error);
-} else {
-  console.log("✅ Supabase upsert success:", subscriptionId);
-}
+        if (error) console.error("❌ Supabase update error:", error);
+        else console.log("✅ Supabase updated Trial → Active for business:", businessId);
 
-break;
-}
+        break;
+      }
 
       // ==============================
       // SUBSCRIPTION UPDATED
@@ -82,7 +74,6 @@ break;
         const subscription = event.data.object as Stripe.Subscription;
         console.log("🔄 Subscription updated:", subscription.id, subscription.status);
 
-        // --- Mapping status ---
         let status: string;
         if (subscription.status === "canceled" || subscription.status === "incomplete_expired") {
           status = "canceled";
@@ -94,18 +85,10 @@ break;
           status = subscription.status;
         }
 
-        // --- Calcul end_date ---
-        // 🔹 Calcul end_date safely
-const endDate =
-  // 1️⃣ Essayer sur subscription directement (TS ne connaît pas, donc cast en any)
-  (subscription as any).current_period_end
-    ? new Date((subscription as any).current_period_end * 1000).toISOString()
-    : // 2️⃣ Sinon vérifier le premier item
-    subscription.items.data.length > 0 && subscription.items.data[0].current_period_end
-    ? new Date(subscription.items.data[0].current_period_end * 1000).toISOString()
-    : null;
-
-        console.log("📦 Updating Supabase:", { subscriptionId: subscription.id, status, endDate });
+        // Calcul de end_date
+        const endDate = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : null;
 
         const { error } = await supabase
           .from("subscriptions")
@@ -113,7 +96,7 @@ const endDate =
           .eq("stripe_subscription_id", subscription.id);
 
         if (error) console.error("❌ Supabase subscription.updated error:", error);
-        else console.log("✅ Supabase updated for subscription:", subscription.id);
+        else console.log("✅ Supabase updated subscription:", subscription.id);
 
         break;
       }
@@ -121,6 +104,7 @@ const endDate =
       default:
         console.log("ℹ️ Event not handled:", event.type);
     }
+
   } catch (err) {
     console.error("❌ Webhook error:", err);
     return new Response("Webhook error", { status: 400 });

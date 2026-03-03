@@ -71,35 +71,37 @@ export async function POST(req: Request) {
       // SUBSCRIPTION UPDATED
       // ==============================
       case "customer.subscription.updated": {
-        const subscription = event.data.object as Stripe.Subscription;
-        console.log("🔄 Subscription updated:", subscription.id, subscription.status);
+  const subscription = event.data.object as Stripe.Subscription;
+  console.log("🔄 Subscription updated:", subscription.id, subscription.status);
 
-        let status: string;
-        if (subscription.status === "canceled" || subscription.status === "incomplete_expired") {
-          status = "canceled";
-        } else if (subscription.cancel_at_period_end) {
-          status = "canceling";
-        } else if (subscription.status === "active") {
-          status = "active";
-        } else {
-          status = subscription.status;
-        }
+  let status: string;
+  if (subscription.status === "canceled" || subscription.status === "incomplete_expired") {
+    status = "canceled";
+  } else if (subscription.cancel_at_period_end) {
+    status = "canceling";
+  } else if (subscription.status === "active") {
+    status = "active";
+  } else {
+    status = subscription.status;
+  }
 
-        // Calcul de end_date
-        const endDate = subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000).toISOString()
-          : null;
+  // Calcul end_date safely
+  const endDate = (subscription as any).current_period_end
+    ? new Date((subscription as any).current_period_end * 1000).toISOString()
+    : subscription.items.data.length > 0 && (subscription.items.data[0] as any).current_period_end
+    ? new Date((subscription.items.data[0] as any).current_period_end * 1000).toISOString()
+    : null;
 
-        const { error } = await supabase
-          .from("subscriptions")
-          .update({ status, end_date: endDate })
-          .eq("stripe_subscription_id", subscription.id);
+  const { error } = await supabase
+    .from("subscriptions")
+    .update({ status, end_date: endDate })
+    .eq("stripe_subscription_id", subscription.id);
 
-        if (error) console.error("❌ Supabase subscription.updated error:", error);
-        else console.log("✅ Supabase updated subscription:", subscription.id);
+  if (error) console.error("❌ Supabase subscription.updated error:", error);
+  else console.log("✅ Supabase updated subscription:", subscription.id);
 
-        break;
-      }
+  break;
+}
 
       default:
         console.log("ℹ️ Event not handled:", event.type);
