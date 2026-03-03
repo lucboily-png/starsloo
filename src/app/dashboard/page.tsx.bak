@@ -334,14 +334,7 @@ export default function DashboardPage() {
           if(error) alert(error.message)
           else alert(lang==='FR'?'Modifications sauvegardées !':'Saved!')
         }} className="dashboard-button">{lang==='FR'?'Sauvegarder':'Save'}</button>
-      </div>
-	  
-	  <div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700 }}>
-            {lang==='FR' ? `Choisissez votre plan ✔️` : `Chose your plan ✔️`}
-          </h1>
-		  </div>
-		  
+      </div>	  
 
 
       {/* SEND SMS */}
