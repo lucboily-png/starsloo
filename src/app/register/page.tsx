@@ -21,10 +21,8 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-  const pathname = usePathname();
-
-  // Si l'URL contient /en → logo anglais
-  const isEnglish = pathname.startsWith("/en");
+const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+const isEnglish = pathname.startsWith("/en");
 
   const logoSrc = isEnglish
     ? "/images/logo_en.png"
@@ -36,6 +34,8 @@ export default function RegisterPage() {
 
     try {
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
+	  console.log("SignUp result:", signUpData, signUpError);
+	  
       if (signUpError) throw new Error(signUpError.message);
       if (!signUpData.user) throw new Error(lang === "FR" ? "Utilisateur non créé." : "User not created.");
 
@@ -47,7 +47,7 @@ export default function RegisterPage() {
         .select()
         .single();
 
-console.log("Business error:", businessError)
+console.log("Business insert result:", businessData, businessError);
 
 
       if (businessError || !businessData) throw new Error(businessError?.message || "Erreur business.");
@@ -58,7 +58,7 @@ console.log("Business error:", businessError)
         business_id: businessData.id,
       });
 	  
-	  console.log("Profile error:", profileError)
+	  console.log("Profile insert result:", profileError);
 	  
       if (profileError) throw new Error(profileError.message);
 
@@ -71,7 +71,7 @@ console.log("Business error:", businessError)
         status: "trial",
       });
 	  
-	  console.log("Subscription error:", subscriptionError)
+	  console.log("Subscription insert result:", subscriptionError);
       if (subscriptionError) throw new Error(subscriptionError.message);
 
 	setLoading(false);
