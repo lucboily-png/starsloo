@@ -21,10 +21,8 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-  const pathname = usePathname();
-
-  // Si l'URL contient /en → logo anglais
-  const isEnglish = pathname.startsWith("/en");
+const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
+const isEnglish = pathname.startsWith("/en");
 
   const logoSrc = isEnglish
     ? "/images/logo_en.png"
