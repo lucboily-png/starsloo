@@ -2,9 +2,8 @@
 import { createClient } from "@supabase/supabase-js";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-// Supabase service role pour updates sécurisés
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -25,56 +24,65 @@ export async function POST(req: Request) {
 
     console.log("🔥 WEBHOOK TOUCHÉ", event.type);
 
-    // === TRAITEMENT DES EVENTS ===
     switch (event.type) {
+
+      // ==============================
+      // CHECKOUT COMPLETED
+      // ==============================
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-        console.log("💳 Session checkout.completed:", session.id);
 
         const subscriptionId = session.subscription as string;
-        const customerId = session.customer as string;
 
-        // Mettre à jour Supabase pour activer l'abonnement
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("subscriptions")
           .update({
             status: "active",
             start_date: new Date().toISOString(),
-            end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // exemple: 30 jours
           })
           .eq("stripe_subscription_id", subscriptionId);
 
         if (error) {
-          console.error("❌ Erreur Supabase checkout.session.completed:", error);
-        } else {
-          console.log("✅ Supabase mis à jour:", data);
+          console.error("❌ Supabase checkout error:", error);
         }
 
         break;
       }
 
+      // ==============================
+      // SUBSCRIPTION UPDATED
+      // ==============================
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        console.log("🔄 Subscription updated:", subscription.id, subscription.status);
 
-        // Map du status Stripe au status interne
-        let status = "active";
-        if (subscription.status === "canceled") status = "canceled";
-        else if (subscription.status === "incomplete_expired") status = "canceled";
-        else if (subscription.cancel_at_period_end) status = "canceling";
+        console.log(
+          "🔄 Subscription updated:",
+          subscription.id,
+          subscription.status
+        );
 
-        const stripeSubscription = event.data.object as any
+        // --- Mapping status ---
+        let status: string;
 
-let status = subscription.status
+        if (
+          subscription.status === "canceled" ||
+          subscription.status === "incomplete_expired"
+        ) {
+          status = "canceled";
+        } else if (subscription.cancel_at_period_end) {
+          status = "canceling";
+        } else if (subscription.status === "active") {
+          status = "active";
+        } else {
+          status = subscription.status;
+        }
 
-if (subscription.status === "active") status = "active"
-else if (subscription.cancel_at_period_end) status = "canceling"
+        // --- End date ---
+        const endDate = subscription.current_period_end
+          ? new Date(subscription.current_period_end * 1000).toISOString()
+          : null;
 
-const endDate = subscription.current_period_end
-  ? new Date(subscription.current_period_end * 1000).toISOString()
-  : null
-
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from("subscriptions")
           .update({
             status,
@@ -83,9 +91,7 @@ const endDate = subscription.current_period_end
           .eq("stripe_subscription_id", subscription.id);
 
         if (error) {
-          console.error("❌ Erreur Supabase subscription.updated:", error);
-        } else {
-          console.log("✅ Supabase mis à jour:", data);
+          console.error("❌ Supabase subscription.updated error:", error);
         }
 
         break;
@@ -99,6 +105,5 @@ const endDate = subscription.current_period_end
     return new Response("Webhook error", { status: 400 });
   }
 
-  // === RÉPONSE OBLIGATOIRE À STRIPE ===
   return new Response("ok", { status: 200 });
 }
