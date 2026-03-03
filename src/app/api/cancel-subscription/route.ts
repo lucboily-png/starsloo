@@ -45,10 +45,13 @@ export async function POST(req: NextRequest) {
 
     console.log('🔄 Updating Stripe...')
 
-const updatedStripeSub = await stripe.subscriptions.update(
+    const updatedStripeSub = await stripe.subscriptions.update(
   subscription.stripe_subscription_id,
   { cancel_at_period_end: true }
-) as Stripe.Subscription
+) as Stripe.Subscription;
+
+// Maintenant TypeScript sait que c’est une Subscription
+const endDate = new Date((updatedStripeSub.current_period_end ?? 0) * 1000);
 
     console.log('✅ Stripe updated:', updatedStripeSub.id)
 
