@@ -78,9 +78,13 @@ export async function POST(req: Request) {
         }
 
         // --- End date ---
-        const endDate = subscription.current_period_end
-          ? new Date(subscription.current_period_end * 1000).toISOString()
-          : null;
+       const endDate =
+  subscription.items.data.length > 0 &&
+  subscription.items.data[0].current_period_end
+    ? new Date(
+        subscription.items.data[0].current_period_end * 1000
+      ).toISOString()
+    : null;
 
         const { error } = await supabase
           .from("subscriptions")
