@@ -128,7 +128,10 @@ export default function RegisterPage() {
           }}
         >
 		
-
+		{/* LOGO */}
+      <div style={{ display: 'flex', justifyContent: 'center', padding: '0px 0px 50px' }}>
+        <Image src="/images/logo.png" alt="Logo" width={284} height={120} />
+      </div>
 	
 	  
           {lang === "FR" ? "Créer votre compte" : "Create your Account"}

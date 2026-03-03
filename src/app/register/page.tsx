@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation"
 import { supabase } from "@/lib/supabase";
 import "./register.css";
 import Image from 'next/image'
