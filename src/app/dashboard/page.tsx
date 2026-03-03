@@ -444,10 +444,22 @@ async function handlePlanClick(plan: Plan) {
    
 	  
 	  
-      {/* PLAN MODAL */}
-      {showPlanModal && (
-        <PlanModal lang={lang} onClose={()=>setShowPlanModal(false)} businessId={business?.id}/>
-      )}
+      {/* Plan Modal */}
+      <PlanModal
+        open={showPlanModal}
+        businessId={business?.id!}
+        onClose={() => setShowPlanModal(false)}
+        onPlanSelected={(plan) => {
+          setSubscription({
+            ...subscription!,
+            plan_name: plan.name,
+            sms_max: plan.sms,
+            sms_sent: 0,
+            status: "active"
+          })
+        }}
+      />
+
     </div>
 	 
 

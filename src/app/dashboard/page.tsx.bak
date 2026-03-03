@@ -175,26 +175,39 @@ export default function DashboardPage() {
   }
 
   // 🔹 Create Stripe checkout
-  async function handlePlanClick(plan: { priceId: string; name: string; sms: number }) {
-    if (!business) return alert('Business not found')
-    try {
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId: plan.priceId,
-          businessId: business.id,
-          planName: plan.name,
-          smsMax: plan.sms
-        })
+type Plan = {
+  priceId: string
+  nameFR: string
+  nameEN: string
+  sms: string   // ou number si tu le changes plus tard
+  color: string
+  priceText: string
+  advantages: string[]
+}
+
+async function handlePlanClick(plan: Plan) {
+  if (!business) return alert('Business not found')
+
+  try {
+    const res = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        priceId: plan.priceId,
+        businessId: business.id,
+        planName: lang === 'FR' ? plan.nameFR : plan.nameEN,
+        smsMax: plan.sms
       })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Stripe error')
-      window.location.href = data.url
-    } catch (err: any) {
-      alert(err.message)
-    }
+    })
+
+    const data = await res.json()
+    if (!res.ok) throw new Error(data.error || 'Stripe error')
+
+    window.location.href = data.url
+  } catch (err: any) {
+    alert(err.message)
   }
+}
 
   // 🔹 Contact Form
   const handleContactSubmit = async (e: any) => {
