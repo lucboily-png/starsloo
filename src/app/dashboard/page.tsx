@@ -117,8 +117,8 @@ export default function DashboardPage() {
       return alert(lang==='FR' ? 'Limite de SMS atteinte, veuillez choisir un plan' : 'SMS limit reached')
     }
 
-    const templateFR = smsTemplateFR || 'Bonjour {client_name}, découvrez notre offre sur {link} !'
-    const templateEN = smsTemplateEN || 'Hi {client_name}, check our offer on {link}!'
+    const templateFR = smsTemplateFR || 'Bonjour {client_name}, découvrez notre offre sur {business_name} !'
+    const templateEN = smsTemplateEN || 'Hi {client_name}, check our offer on {business_name}!'
     const message = (smsLang==='FR' ? templateFR : templateEN)
       .replace('{client_name}', clientName)
       .replace('{business_name}', business.name)
@@ -263,13 +263,13 @@ const plans = [
     nameFR: "Je veux l’essayer 🎯",
     nameEN: "I want to try 🎯",
     color: "#28A7C9",
-    sms: 90,
-    priceText: "$19.99",
+    sms: 100,
+    priceText: "$19.95",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
     advantages: {
       FR: [
         "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
-        "Envoyez jusqu’à 130 SMS par mois",
+        "Envoyez jusqu’à 100 SMS par mois",
         "Accès au tableau de bord",
         "Support par email"
       ],
@@ -287,7 +287,7 @@ const plans = [
     nameEN: "WOW 🔥",
     color: "#28A7C9",
     sms: 250,
-    priceText: "$29.99",
+    priceText: "$29.95",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
 
     advantages: {
@@ -313,7 +313,7 @@ const plans = [
   nameEN: "Incredible 🚀",
   color: "#28A7C9",
   sms: 600,
-  priceText: "$49.99",
+  priceText: "$49.95",
   priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
 
   advantages: {
@@ -386,9 +386,10 @@ const plans = [
 
       {/* GOOGLE LINK / SMS TEMPLATES */}
       <div className="dashboard-card" style={{maxWidth:'1200px', margin:'40px auto'}}>
-        <h3>{lang==='FR'?'Votre message ici + lien URL':'Your message here + LINK URL'}</h3>
-        <input type="text" placeholder={lang==='FR'?'Votre message en Francais + URL de votre LIEN':'Your French message + Your link URL'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
-        <input type="text" placeholder={lang==='FR'?'Votre message en Anglais + URL de votre LIEN':'Your English message + Your link URL'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
+        <h3>{lang==='FR'?'Votre message en Français ici + votre lien URL':'Your French message here + your URL link'}</h3>
+        <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name}, merci de votre passage à {business_name}. Laissez-nous un avis Google... + votre url (lien google ou autre)':' EX: Bonjour {client_name}, merci de votre passage chez {business.name}. Laisser-nous un avis Google...  + your url link here (google review link or other)'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
+        <h3>{lang==='FR'?'Votre message en anglais ici + votre lien URL':'Your English message here + your URL link'}</h3>
+		<input type="text" placeholder={lang==='FR'?'EX: Hi {client_name}, thank you for your visit at {business_name}. Let us a Google review... + votre url (lien google ou autre)':'EX: Hi [First Name], thanks for visiting us at {business.name}. Your Google review means a lot for us... + your url link here (google review link or other)'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
         <button onClick={async ()=>{
           if(!business) return
           const { error } = await supabase.from('businesses').update({
