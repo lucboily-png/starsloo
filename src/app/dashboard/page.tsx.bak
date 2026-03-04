@@ -513,15 +513,6 @@ const plans = [
         open={showPlanModal}
         businessId={business?.id!}
         onClose={() => setShowPlanModal(false)}
-        onPlanSelected={(plan) => {
-          setSubscription({
-            ...subscription!,
-            plan_name: plan.name,
-            sms_max: plan.sms,
-            sms_sent: 0,
-            status: "active"
-          })
-        }}
       />
 
     </div>
