@@ -443,12 +443,17 @@ const plans = [
         {(lang === 'FR' ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => <li key={i}>{adv}</li>)}
       </ul>
 		<button
-  onClick={() => handlePlanClick({
-    name: lang === 'FR' ? plan.nameFR : plan.nameEN,
-    sms: parseInt(plan.sms),
-    priceId: plan.priceId
-  })}
-  style={{ ... }}
+  onClick={() => handlePlanClick(plan)}
+  style={{
+    marginTop: '10px',
+    padding: '10px 15px',
+    borderRadius: '8px',
+    border: 'none',
+    background: '#364899',
+    color: '#fff',
+    fontWeight: 600,
+    cursor: 'pointer'
+  }}
 >
   {lang === 'FR' ? 'Choisir' : 'Select'}
 </button>
