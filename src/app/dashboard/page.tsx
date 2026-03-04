@@ -53,7 +53,7 @@ export default function DashboardPage() {
       <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
         {lang === "FR"
           ? "La puissance des étoiles"
-          : "Th epower of stars"}
+          : "The power of stars"}
       </p>
     </div>
   );
@@ -513,15 +513,6 @@ const plans = [
         open={showPlanModal}
         businessId={business?.id!}
         onClose={() => setShowPlanModal(false)}
-        onPlanSelected={(plan) => {
-          setSubscription({
-            ...subscription!,
-            plan_name: plan.name,
-            sms_max: plan.sms,
-            sms_sent: 0,
-            status: "active"
-          })
-        }}
       />
 
     </div>
