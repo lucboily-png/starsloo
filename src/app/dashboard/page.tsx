@@ -454,23 +454,6 @@ const plans = [
         ))}
       </ul>
 
-      {/* Bouton */}
-      <button
-  onClick={() => handlePlanClick(plan)}  // ← ici on passe le plan complet
-  style={{
-    marginTop: '10px',
-    padding: '10px 15px',
-    borderRadius: '8px',
-    border: 'none',
-    background: '#364899',
-    color: '#fff',
-    fontWeight: 600,
-    cursor: 'pointer'
-  }}
->
-  {lang === 'FR' ? 'Choisir' : 'Select'}
-</button>
-
     </div>
   ))}
 </div>
