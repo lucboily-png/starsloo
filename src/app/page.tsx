@@ -170,17 +170,30 @@ export default function HomePage() {
           <p>{lang === 'FR' ? 'Notre plateforme est intuitive et rapide, sans tracas techniques.' : 'Our platform is intuitive and hassle-free.'}</p>
 		</div>
       </section>
-	  
-<section className="marketing-hero-sections">
-<div style={{ display: 'flex', justifyContent: 'center', padding: '50px 40px 50px 35%' }}>
-<button
+	
+      {/* HERO SECTION */}
+      <section className="hero">
+        <div className="hero-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+
+        <h1 className="hero-title">
+          {lang === 'FR'
+            ? 'Exploser vos avis GOOGLE facilement!'
+            : 'Explode your Google reviews easyly!'}
+        </h1>
+
+        <p className="hero-subtitle">
+          
+        </p>
+
+        <button
           onClick={() => window.location.href = '/register'}
           className="btn-primary hero-btn"
         >
           {lang === 'FR' ? 'Créer un compte maintenant' : 'Create an account now'}
         </button>
-	  </div>
-	  </section>
+      </section>
 	   
 	           <div className="hero-stars">
           <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
