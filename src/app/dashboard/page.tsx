@@ -442,7 +442,7 @@ const plans = [
       <ul>
         {(lang === 'FR' ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => <li key={i}>{adv}</li>)}
       </ul>
-	<button
+		<button
   onClick={() => handlePlanClick({
     name: lang === 'FR' ? plan.nameFR : plan.nameEN,
     sms: parseInt(plan.sms),
@@ -453,6 +453,7 @@ const plans = [
   {lang === 'FR' ? 'Choisir' : 'Select'}
 </button>
 
+    </div>
     </div>
   ))}
 </div>

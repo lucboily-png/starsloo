@@ -437,22 +437,21 @@ const plans = [
         boxShadow: '0 6px 12px rgba(0,0,0,0.25)',
       }}
     >
-      {/* Nom du plan */}
-      <h3 style={{ marginBottom: '10px' }}>
-        {lang === 'FR' ? plan.nameFR : plan.nameEN}
-      </h3>
-
-      {/* Nombre de SMS */}
-      <p style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>
-        {plan.sms} SMS / mois
-      </p>
-
-      {/* Avantages */}
-      <ul style={{ textAlign: 'left', paddingLeft: '18px', fontSize: '13px', marginBottom: '15px' }}>
-        {(lang === 'FR' ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => (
-          <li key={i}>{adv}</li>
-        ))}
+      <h3>{lang === 'FR' ? plan.nameFR : plan.nameEN}</h3>
+      <p>{plan.sms} SMS / mois</p>
+      <ul>
+        {(lang === 'FR' ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => <li key={i}>{adv}</li>)}
       </ul>
+	<button
+  onClick={() => handlePlanClick({
+    name: lang === 'FR' ? plan.nameFR : plan.nameEN,
+    sms: parseInt(plan.sms),
+    priceId: plan.priceId
+  })}
+  style={{ ... }}
+>
+  {lang === 'FR' ? 'Choisir' : 'Select'}
+</button>
 
     </div>
   ))}
