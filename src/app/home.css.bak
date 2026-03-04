@@ -162,6 +162,7 @@ body { background: #f4f6fc; color: #111827; }
 .marketing-hero-sections {
   display: flex;
   flex-direction: column;
+  padding: 2.5rem 2rem;
   gap: 2rem;
   width: 100%;
   max-width: 1000px;

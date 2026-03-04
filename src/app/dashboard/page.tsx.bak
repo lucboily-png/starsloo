@@ -1,3 +1,4 @@
+
 /* src/app/dashboard/page.tsx */
 
 'use client'
@@ -48,7 +49,7 @@ export default function DashboardPage() {
       <img
         src="/images/logo.png"
         alt="Starsloo"
-        style={{ height: "90px" }}
+        style={{ height: "100px" }}
       />
       <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
         {lang === "FR"

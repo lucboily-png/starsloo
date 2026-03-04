@@ -67,11 +67,25 @@ export default function HomePage() {
     setContactLoading(false)
   }
 
+  function Logo({ lang }: { lang: "FR" | "EN" }) {
+  return (
+    <div style={{ textAlign: "center" }}>
+      <img
+        src="/images/logo.png"
+        alt="Starsloo"
+        style={{ height: "100px" }}
+      />
+      <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
+        {lang === "FR"
+          ? "La puissances des étoiles"
+          : "The power of stars"}
+      </p>
+    </div>
+  );
+}
+
   return (
     <div className="home-container">
-
-     
-
       {/* LANGUAGE SWITCH */}
       <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", padding: "0 40px 20px" }}>
         <button
@@ -91,9 +105,8 @@ export default function HomePage() {
       </div>
 
  {/* LOGO */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '25px 0' }}>
-        <Image src="/images/logo.png" alt="Logo" width={284} height={120} />
-      </div>
+      {/* LOGO */}
+      <Logo lang={lang} />
 	  
       {/* HERO SECTION */}
       <section className="hero">
