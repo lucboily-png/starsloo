@@ -42,14 +42,22 @@ export default function DashboardPage() {
   // Si l'URL contient /en → logo anglais
   const isEnglish = pathname.startsWith("/en");
 
-  const logoSrc = isEnglish
-    ? "/images/logo_en.png"
-    : "/images/logo.png";
-	
-
-  const altText = isEnglish
-    ? "Starloo Logo"
-    : "Logo Starloo";
+  function Logo({ lang }: { lang: "FR" | "EN" }) {
+  return (
+    <div style={{ textAlign: "center" }}>
+      <img
+        src="/images/logo.png"
+        alt="Starsloo"
+        style={{ height: "100px" }}
+      />
+      <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
+        {lang === "FR"
+          ? "Chaque avis compte ⭐"
+          : "Every review counts ⭐"}
+      </p>
+    </div>
+  );
+}
 
   // 🔹 Fetch business + subscription
   useEffect(() => {
@@ -245,52 +253,90 @@ async function handlePlanClick(plan: Plan) {
   }
 
   // 🔹 Plans avec avantages
-  const plans = [
-    {
-      nameFR: 'Je veux l’essayer 🎯', nameEN: 'I want to try 🎯', color: '#cd7f32', sms: '130 SMS par mois', priceText: '$19.99/mo', priceId: 'price_1T5e6CEyGK0Xf3bphUQDpxig',
-      advantages: [
-	  'Faciliter la récoltes d’avis google et l’envoie de SMS marketing',
-        'Envoyez jusqu’à 130 SMS par mois pour vos avis Google.',
-        'Accès au tableau de bord',
-        'Support par email',
+const plans = [
+  {
+    nameFR: "Je veux l’essayer 🎯",
+    nameEN: "I want to try 🎯",
+    color: "#cd7f32",
+    sms: "90 SMS par mois",
+    priceText: "$19.99/mo",
+    priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
 
-      ]
-    },
-    {
-      nameFR: 'WOW 🔥', nameEN: 'WOW 🔥', color: '#c0c0c0', sms: '150 SMS par mois', priceText: '$24.99/mo', priceId: 'price_1T5e7KEyGK0Xf3bpV6yhZEvK',
-      advantages: [
-        'Pour les entreprises en croissance avec plus de volume qui veulent mettre le feu à leurs avis google',
-        'Faciliter la récoltes d’avis google et l’envoie de SMS marketing',
-        'Envoyez jusqu’à 250 SMS par mois pour vos avis Google.',
-        'Accès au tableau de bord',
-        'Support par email',
-      ]
-    },
-    {
-      nameFR: 'Incroyable 🚀', nameEN: 'Incredible 🚀', color: '#ffd700', sms: '150 SMS par mois', priceText: '$49.99/mo', priceId: 'price_1T5e9REyGK0Xf3bpasnTX12f',
-      advantages: [
-        'Idéal pour les entreprises établies et très actives qui veulent passer à une vitesse supérieur avec la récolte de leurs avis google et SMSmarketing',
-		'Envoyez jusqu’à 600 SMS par mois pour vos avis Google.',
-        'Accès au tableau de bord',
-        'Support par email',
+    advantages: {
+      FR: [
+        "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
+        "Envoyez jusqu’à 130 SMS par mois",
+        "Accès au tableau de bord",
+        "Support par email"
+      ],
+      EN: [
+        "Easily collect Google reviews and send marketing SMS",
+        "Send up to 130 SMS per month",
+        "Dashboard access",
+        "Email support"
       ]
     }
-  ]
+  },
+
+  {
+    nameFR: "WOW 🔥",
+    nameEN: "WOW 🔥",
+    color: "#c0c0c0",
+    sms: "250 SMS par mois",
+    priceText: "$29.99/mo",
+    priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
+
+    advantages: {
+      FR: [
+        "Idéal pour les entreprises en croissance",
+        "Augmentez rapidement vos avis Google",
+        "Envoyez jusqu’à 250 SMS par mois",
+        "Tableau de bord complet",
+        "Support prioritaire par email"
+      ],
+      EN: [
+        "Perfect for growing businesses",
+        "Boost your Google reviews faster",
+        "Send up to 250 SMS per month",
+        "Full dashboard access",
+        "Priority email support"
+      ]
+    }
+  },
+  
+  {
+  nameFR: "Incroyable 🚀",
+  nameEN: "Incredible 🚀",
+  color: "#ffd700",
+  sms: "600 SMS par mois",
+  priceText: "$49.99/mo",
+  priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
+
+  advantages: {
+    FR: [
+      "Conçu pour les entreprises établies et ambitieuses",
+      "Maximisez votre visibilité et vos avis Google",
+      "Envoyez jusqu’à 600 SMS par mois",
+      "Tableau de bord avancé avec statistiques détaillées",
+      "Support prioritaire rapide"
+    ],
+    EN: [
+      "Designed for established and ambitious businesses",
+      "Maximize your visibility and Google reviews",
+      "Send up to 600 SMS per month",
+      "Advanced dashboard with detailed analytics",
+      "Fast priority support"
+    ]
+  }
+}
+]
 
 
-  return (
-    <div className="dashboard-container">
-         <div style={{ display: 'flex', justifyContent: 'center', padding: '25px 0' }}>
-      <Image
-        src={logoSrc}
-        alt={altText}
-        width={284}
-        height={120}
-        priority
-      />
-    </div>
+ return (
+    <div>
 
-
+      {/* LOGO */}
+      <Logo lang={lang} />
 
       {/* HEADER */}
       <div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
@@ -366,7 +412,7 @@ async function handlePlanClick(plan: Plan) {
       )}
 
 <div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700 }}>
+<h1 style={{ margin: 30, fontSize: '28px', fontWeight: 700 }}>
             {lang==='FR' ? `Choisissez votre plan ✔️` : `Chose your plan ✔️`}
           </h1>
 		  </div>
@@ -381,7 +427,9 @@ async function handlePlanClick(plan: Plan) {
                 {lang==='FR'?plan.nameFR:plan.nameEN}
               </h3>
               <ul style={{ fontSize:'14px', color:'#555', paddingLeft:'18px', marginBottom:'10px' }}>
-                {plan.advantages.map((adv,i)=><li key={i}>{adv}</li>)}
+                {plan.advantages[lang].map((adv, i) => (
+  <li key={i}>{adv}</li>
+))}
               </ul>
 			  <p></p>
 			  <p style={{margin:'5px 20px', fontSize:'15px', fontWeight:700}}>{plan.sms}</p>
