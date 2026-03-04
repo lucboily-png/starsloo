@@ -199,6 +199,8 @@ type Plan = {
 async function handlePlanClick(plan: Plan) {
   if (!business) return alert('Business not found')
 
+  const planName = lang === 'FR' ? plan.nameFR : plan.nameEN
+
   try {
     const res = await fetch('/api/create-checkout-session', {
       method: 'POST',
@@ -206,7 +208,7 @@ async function handlePlanClick(plan: Plan) {
       body: JSON.stringify({
         priceId: plan.priceId,
         businessId: business.id,
-        planName: lang === 'FR' ? plan.nameFR : plan.nameEN,
+        planName,       // on utilise maintenant planName calculé ici
         smsMax: plan.sms
       })
     })
@@ -454,24 +456,21 @@ const plans = [
 
       {/* Bouton */}
       <button
-        onClick={() => handlePlanClick({
-          name: lang === 'FR' ? plan.nameFR : plan.nameEN,
-          sms: parseInt(plan.sms),
-          priceId: plan.priceId
-        })}
-        style={{
-          marginTop: '10px',
-          padding: '10px 15px',
-          borderRadius: '8px',
-          border: 'none',
-          background: '#364899',
-          color: '#fff',
-          fontWeight: 600,
-          cursor: 'pointer'
-        }}
-      >
-        {lang === 'FR' ? 'Choisir' : 'Select'}
-      </button>
+  onClick={() => handlePlanClick(plan)}  // ← ici on passe le plan complet
+  style={{
+    marginTop: '10px',
+    padding: '10px 15px',
+    borderRadius: '8px',
+    border: 'none',
+    background: '#364899',
+    color: '#fff',
+    fontWeight: 600,
+    cursor: 'pointer'
+  }}
+>
+  {lang === 'FR' ? 'Choisir' : 'Select'}
+</button>
+
     </div>
   ))}
 </div>
