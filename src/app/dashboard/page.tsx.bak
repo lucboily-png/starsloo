@@ -509,11 +509,12 @@ const plans = [
 	  
 	  
       {/* Plan Modal */}
-      <PlanModal
-        open={showPlanModal}
-        businessId={business?.id!}
-        onClose={() => setShowPlanModal(false)}
-      />
+     <PlanModal
+  open={showPlanModal}
+  businessId={business?.id!}
+  onClose={() => setShowPlanModal(false)}
+  lang={lang}  // ← Ajoute cette ligne
+/>
 
     </div>
 	 
