@@ -178,8 +178,8 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
                 ))}
               </ul>
               <p style={{ fontSize:'12px', fontStyle:'italic', marginBottom:'10px' }}>
-                {lang === "FR" ? plan.modalContent.FR : plan.modalContent.EN}
-              </p>
+  {lang === "FR" ? plan.modalContent?.FR || '' : plan.modalContent?.EN || ''}
+</p>
               <button className="btn-green" disabled={loading}>
                 {loading ? (lang === "FR" ? 'Chargement...' : 'Loading...') : (lang === "FR" ? 'Choisir' : 'Select')}
               </button>

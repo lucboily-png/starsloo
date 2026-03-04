@@ -35,6 +35,7 @@ const plans: Plan[] = [
     sms: "90 SMS par mois",
     priceText: "$19.99/mo",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
+	color: "#cd7f32",
     advantages: {
       FR: [
         "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
@@ -60,6 +61,7 @@ const plans: Plan[] = [
     sms: "250 SMS par mois",
     priceText: "$29.99/mo",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
+	color: "#cd7f32",
     advantages: {
       FR: [
         "Idéal pour les entreprises en croissance",
@@ -87,6 +89,7 @@ const plans: Plan[] = [
     sms: "600 SMS par mois",
     priceText: "$49.99/mo",
     priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
+	color: "#cd7f32",
     advantages: {
       FR: [
         "Idéal pour les entreprises établies et très actives",
