@@ -53,14 +53,12 @@ const handlePlanClick = async (plan: {
     })
 
     const data = await res.json()
+console.log('Stripe Checkout URL:', data.url)
+window.location.href = data.url
 
     if (!res.ok) throw new Error(data.error || 'Stripe error')
 
     // Redirection vers Stripe Checkout
-console.log('Stripe session URL:', data.url)	
-
-    window.location.href = data.url
-
   } catch (err: any) {
     alert(err.message)
     setLoading(false)
