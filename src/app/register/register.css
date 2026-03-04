@@ -13,14 +13,15 @@ html, body, #__next {
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  width: 100%;
-  max-width: 1000px;
+  width: 0, auto;
+  max-width: 900px;
   margin: 3rem auto 0 auto;
   text-align: center;
 }
 
 .marketing-card {
   background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  width: 450px;
   color: white;
   border-radius: 25px;
   padding: 3rem 2rem;
