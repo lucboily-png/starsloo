@@ -262,11 +262,10 @@ const plans = [
   {
     nameFR: "Je veux l’essayer 🎯",
     nameEN: "I want to try 🎯",
-    color: "#cd7f32",
+    color: "#28A7C9",
     sms: 90,
-    priceText: "$19.99/mo",
+    priceText: "$19.99",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
-
     advantages: {
       FR: [
         "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
@@ -286,9 +285,9 @@ const plans = [
   {
     nameFR: "WOW 🔥",
     nameEN: "WOW 🔥",
-    color: "#c0c0c0",
+    color: "#28A7C9",
     sms: 250,
-    priceText: "$29.99/mo",
+    priceText: "$29.99",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
 
     advantages: {
@@ -312,9 +311,9 @@ const plans = [
   {
   nameFR: "Incroyable 🚀",
   nameEN: "Incredible 🚀",
-  color: "#ffd700",
+  color: "#28A7C9",
   sms: 600,
-  priceText: "$49.99/mo",
+  priceText: "$49.99",
   priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
 
   advantages: {
@@ -387,7 +386,7 @@ const plans = [
 
       {/* GOOGLE LINK / SMS TEMPLATES */}
       <div className="dashboard-card" style={{maxWidth:'1200px', margin:'40px auto'}}>
-        <h3>{lang==='FR'?'SMS + lien URL':'Link / SMS + LINK URL'}</h3>
+        <h3>{lang==='FR'?'Votre message ici + lien URL':'Your message here + LINK URL'}</h3>
         <input type="text" placeholder={lang==='FR'?'Votre message en Francais + URL de votre LIEN':'Your French message + Your link URL'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
         <input type="text" placeholder={lang==='FR'?'Votre message en Anglais + URL de votre LIEN':'Your English message + Your link URL'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
         <button onClick={async ()=>{
@@ -416,48 +415,108 @@ const plans = [
         </div>
       )}
 
-<div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-<h1 style={{ margin: 30, fontSize: '28px', fontWeight: 700 }}>
+		<div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700 }}>
             {lang==='FR' ? `Choisissez votre plan ✔️` : `Chose your plan ✔️`}
           </h1>
 		  </div>
 		  
-    {/* Plans Section */}
-<div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
-  {plans.map((plan) => (
+{/* Plans Section */}
+<div
+  style={{
+    maxWidth: '1200px',
+    margin: '0 auto 60px auto',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '30px'
+  }}
+>
+  {plans.map((plan, index) => (
     <div
       key={plan.priceId}
       style={{
-        borderRadius: '10px',
-        padding: '20px',
-        width: '220px',
-        textAlign: 'center',
-        background: plan.color,
-        color: '#fff',
-        boxShadow: '0 6px 12px rgba(0,0,0,0.25)',
+        background: '#ffffff',
+        borderRadius: '18px',
+        padding: '35px 30px',
+        boxShadow: '0 15px 35px rgba(0,0,0,0.06)',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        border: index === 1 ? '2px solid #28A7C9' : '1px solid #eee',
+        transform: index === 1 ? 'scale(1.03)' : 'scale(1)',
+        transition: '0.25s'
       }}
     >
-      <h3>{lang === 'FR' ? plan.nameFR : plan.nameEN}</h3>
-      <p>{plan.sms} SMS / mois</p>
-      <ul>
-        {(lang === 'FR' ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => <li key={i}>{adv}</li>)}
-      </ul>
-		<button
-  onClick={() => handlePlanClick(plan)}
-  style={{
-    marginTop: '10px',
-    padding: '10px 15px',
-    borderRadius: '8px',
-    border: 'none',
-    background: '#364899',
-    color: '#fff',
-    fontWeight: 600,
-    cursor: 'pointer'
-  }}
->
-  {lang === 'FR' ? 'Choisir' : 'Select'}
-</button>
+      {/* PLAN NAME */}
+      <div>
+        <h3
+          style={{
+            fontSize: '22px',
+            fontWeight: 700,
+            marginBottom: '10px',
+            color: '#111'
+          }}
+        >
+          {lang === 'FR' ? plan.nameFR : plan.nameEN}
+        </h3>
 
+        {/* PRICE */}
+        <div style={{ marginBottom: '20px' }}>
+          <span
+            style={{
+              fontSize: '32px',
+              fontWeight: 800,
+              color: '#28A7C9'
+            }}
+          >
+            {plan.priceText}
+          </span>
+          <span style={{ fontSize: '14px', color: '#777' }}>
+            {lang === 'FR' ? ' / mois' : ' / month'}
+          </span>
+          <div style={{ fontSize: '14px', color: '#555', marginTop: '5px' }}>
+            {plan.sms} SMS
+          </div>
+        </div>
+
+        {/* ADVANTAGES */}
+        <ul
+          style={{
+            paddingLeft: '18px',
+            marginBottom: '25px',
+            color: '#444',
+            lineHeight: '1.6'
+          }}
+        >
+          {(lang === 'FR'
+            ? plan.advantages.FR
+            : plan.advantages.EN
+          ).map((adv, i) => (
+            <li key={i} style={{ marginBottom: '6px' }}>
+              {adv}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* BUTTON */}
+      <button
+        onClick={() => handlePlanClick(plan)}
+        style={{
+          marginTop: 'auto',
+          padding: '12px',
+          borderRadius: '10px',
+          border: 'none',
+          background: '#28A7C9',
+          color: '#fff',
+          fontWeight: 700,
+          fontSize: '15px',
+          cursor: 'pointer',
+          width: '100%'
+        }}
+      >
+        {lang === 'FR' ? 'Choisir ce plan' : 'Select plan'}
+      </button>
     </div>
   ))}
 </div>

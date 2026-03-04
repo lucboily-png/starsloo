@@ -77,7 +77,7 @@
 
 /* ===== BUTTONS ===== */
 .dashboard-button {
-  background: #E8AA23;
+  background: #189CBA;
   color: #fff;
   border: none;
   border-radius: 10px;
@@ -88,7 +88,7 @@
 }
 
 .dashboard-button2 {
-  background: #CCDB21;
+  background: #E8AA23;
   color: #fff;
   border: none;
   border-radius: 10px;

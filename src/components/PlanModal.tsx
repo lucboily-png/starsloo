@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
 
 type Plan = {
   nameFR: string
   nameEN: string
   color: string
-  sms: string          // reste string car on écrit "250 SMS par mois"
+  sms: string
   priceText: string
   priceId: string
   advantages: {
@@ -27,94 +26,86 @@ type PlanModalProps = {
   lang: "FR" | "EN"
 }
 
-// ✅ Plans fusionnés avec FR/EN, avantages et modalConten
 const plans: Plan[] = [
   {
     nameFR: "Je veux l’essayer 🎯",
-    nameEN: "I want to try 🎯",
-    sms: "90 SMS par mois",
-    priceText: "$19.99/mo",
+    nameEN: "Starter 🎯",
+    sms: "90 SMS",
+    priceText: "$19.99",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
-	color: "#cd7f32",
+    color: "#ffffff",
     advantages: {
       FR: [
-        "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
-        "Envoyez jusqu’à 130 SMS par mois",
-        "Accès au tableau de bord",
-        "Support par email"
+        "Collecte d’avis Google simplifiée",
+        "Automatisation SMS",
+        "Dashboard inclus",
+        "Support email"
       ],
       EN: [
-        "Easily collect Google reviews and send marketing SMS",
-        "Send up to 130 SMS per month",
+        "Easy Google review collection",
+        "SMS automation",
         "Dashboard access",
         "Email support"
       ]
     },
     modalContent: {
-      FR: "Ce plan est parfait pour tester Starsloo avec un petit volume de SMS.",
-      EN: "This plan is perfect to try Starsloo with a small SMS volume."
+      FR: "Idéal pour commencer et tester la puissance de Starsloo.",
+      EN: "Perfect to start and test the power of Starsloo."
     }
   },
   {
     nameFR: "WOW 🔥",
-    nameEN: "WOW 🔥",
-    sms: "250 SMS par mois",
-    priceText: "$29.99/mo",
+    nameEN: "Growth 🔥",
+    sms: "250 SMS",
+    priceText: "$29.99",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
-	color: "#cd7f32",
+    color: "#ffffff",
     advantages: {
       FR: [
-        "Idéal pour les entreprises en croissance",
-        "Augmentez rapidement vos avis Google",
-        "Envoyez jusqu’à 250 SMS par mois",
-        "Tableau de bord complet",
-        "Support prioritaire par email"
+        "Augmentez vos avis rapidement",
+        "Plus de volume SMS",
+        "Statistiques avancées",
+        "Support prioritaire"
       ],
       EN: [
-        "Perfect for growing businesses",
-        "Boost your Google reviews faster",
-        "Send up to 250 SMS per month",
-        "Full dashboard access",
-        "Priority email support"
+        "Boost reviews faster",
+        "Higher SMS volume",
+        "Advanced analytics",
+        "Priority support"
       ]
     },
     modalContent: {
-      FR: "Ce plan est adapté pour les entreprises qui veulent maximiser leurs avis et communications.",
-      EN: "This plan is suited for businesses that want to maximize reviews and communications."
+      FR: "Le plan préféré des entreprises en croissance.",
+      EN: "Most popular plan for growing businesses."
     }
   },
   {
     nameFR: "Incroyable 🚀",
-    nameEN: "Incredible 🚀",
-    sms: "600 SMS par mois",
-    priceText: "$49.99/mo",
+    nameEN: "Pro 🚀",
+    sms: "600 SMS",
+    priceText: "$49.99",
     priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
-	color: "#cd7f32",
+    color: "#ffffff",
     advantages: {
       FR: [
-        "Idéal pour les entreprises établies et très actives",
-        "Maximisez votre visibilité et vos avis Google",
-        "Envoyez jusqu’à 600 SMS par mois",
-        "Tableau de bord avancé avec analytics détaillées",
-        "Support prioritaire rapide"
+        "Volume SMS élevé",
+        "Analytics complètes",
+        "Optimisation maximale des avis",
+        "Support ultra-prioritaire"
       ],
       EN: [
-        "Designed for established and ambitious businesses",
-        "Maximize your visibility and Google reviews",
-        "Send up to 600 SMS per month",
-        "Advanced dashboard with detailed analytics",
-        "Fast priority support"
+        "High SMS volume",
+        "Full analytics",
+        "Maximum review optimization",
+        "Ultra priority support"
       ]
     },
     modalContent: {
-      FR: "Ce plan est conçu pour les entreprises très actives qui veulent tout automatiser.",
-      EN: "This plan is designed for highly active businesses who want full automation."
+      FR: "Pour les entreprises ambitieuses qui veulent dominer.",
+      EN: "For ambitious businesses ready to dominate."
     }
   }
 ]
-
-// Stripe front-end
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
 
 export default function PlanModal({ open, businessId, onClose, lang }: PlanModalProps) {
   const [loading, setLoading] = useState(false)
@@ -124,6 +115,7 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
   const handlePlanClick = async (plan: Plan) => {
     try {
       setLoading(true)
+
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -131,12 +123,13 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
           priceId: plan.priceId,
           businessId,
           planName: lang === "FR" ? plan.nameFR : plan.nameEN,
-          smsMax: parseInt(plan.sms.replace(/\D/g, '')) // transforme "250 SMS par mois" en 250
-        }),
+          smsMax: parseInt(plan.sms.replace(/\D/g, ''))
+        })
       })
+
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Stripe error')
-      console.log('Stripe Checkout URL:', data.url)
+
       window.location.href = data.url
     } catch (err: any) {
       alert(err.message)
@@ -146,50 +139,149 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
 
   return (
     <div style={{
-      position: 'fixed', top:0, left:0, width:'100vw', height:'100vh',
-      background:'rgba(0,0,0,0.5)', display:'flex', justifyContent:'center', alignItems:'center', zIndex:1000
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0,0,0,0.55)',
+      backdropFilter: 'blur(5px)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
     }}>
-      <div style={{ background:'#fff', padding:'30px', borderRadius:'15px', width:'90%', maxWidth:'900px' }}>
-        <h2 style={{ textAlign:'center', marginBottom:'20px' }}>
-          {lang === "FR" ? "Choisir un plan" : "Choose a plan"}
+      <div style={{
+        width: '95%',
+        maxWidth: '1100px',
+        background: '#ffffff',
+        borderRadius: '22px',
+        padding: '45px',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
+        position: 'relative'
+      }}>
+
+        <h2 style={{
+          textAlign: 'center',
+          fontSize: '28px',
+          fontWeight: 800,
+          marginBottom: '45px'
+        }}>
+          {lang === "FR" ? "Choisissez votre plan" : "Choose your plan"}
         </h2>
 
-        <div style={{ display:'flex', gap:'20px', justifyContent:'center', flexWrap:'wrap' }}>
-          {plans.map(plan => (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '30px'
+        }}>
+          {plans.map((plan, index) => (
             <div
               key={plan.priceId}
               style={{
-                borderRadius:'10px',
-                padding:'20px',
-                width:'250px',
-                textAlign:'center',
-                background: plan.color,
-                color: '#fff',
-                boxShadow:'0 6px 12px rgba(0,0,0,0.25)',
-                cursor:'pointer'
+                borderRadius: '18px',
+                padding: '35px',
+                background: '#ffffff',
+                boxShadow: '0 15px 35px rgba(0,0,0,0.06)',
+                border: index === 1 ? '2px solid #28A7C9' : '1px solid #eee',
+                transform: index === 1 ? 'scale(1.03)' : 'scale(1)',
+                transition: '0.25s',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
               }}
-              onClick={() => handlePlanClick(plan)}
             >
-              <h3>{lang === "FR" ? plan.nameFR : plan.nameEN}</h3>
-              <p style={{ fontSize:'14px', margin:'10px 0' }}>{plan.sms}</p>
-              <ul style={{ fontSize:'12px', textAlign:'left', paddingLeft:'18px', marginBottom:'15px' }}>
-                {(lang === "FR" ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => (
-                  <li key={i}>{adv}</li>
-                ))}
-              </ul>
-              <p style={{ fontSize:'12px', fontStyle:'italic', marginBottom:'10px' }}>
-  {lang === "FR" ? plan.modalContent?.FR || '' : plan.modalContent?.EN || ''}
-</p>
-              <button className="btn-green" disabled={loading}>
-                {loading ? (lang === "FR" ? 'Chargement...' : 'Loading...') : (lang === "FR" ? 'Choisir' : 'Select')}
+              <div>
+                <h3 style={{
+                  fontSize: '22px',
+                  fontWeight: 700,
+                  marginBottom: '12px'
+                }}>
+                  {lang === "FR" ? plan.nameFR : plan.nameEN}
+                </h3>
+
+                <div style={{ marginBottom: '18px' }}>
+                  <span style={{
+                    fontSize: '30px',
+                    fontWeight: 800,
+                    color: '#28A7C9'
+                  }}>
+                    {plan.priceText}
+                  </span>
+                  <span style={{ fontSize: '14px', color: '#777' }}>
+                    {lang === "FR" ? " / mois" : " / month"}
+                  </span>
+                  <div style={{ fontSize: '14px', marginTop: '6px', color: '#555' }}>
+                    {plan.sms}
+                  </div>
+                </div>
+
+                <ul style={{
+                  paddingLeft: '18px',
+                  marginBottom: '20px',
+                  color: '#444',
+                  lineHeight: '1.6'
+                }}>
+                  {(lang === "FR"
+                    ? plan.advantages.FR
+                    : plan.advantages.EN
+                  ).map((adv, i) => (
+                    <li key={i} style={{ marginBottom: '6px' }}>
+                      {adv}
+                    </li>
+                  ))}
+                </ul>
+
+                {plan.modalContent && (
+                  <p style={{
+                    fontSize: '13px',
+                    fontStyle: 'italic',
+                    color: '#777'
+                  }}>
+                    {lang === "FR"
+                      ? plan.modalContent.FR
+                      : plan.modalContent.EN}
+                  </p>
+                )}
+              </div>
+
+              <button
+                onClick={() => handlePlanClick(plan)}
+                disabled={loading}
+                style={{
+                  marginTop: '25px',
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: '#28A7C9',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                  width: '100%'
+                }}
+              >
+                {loading
+                  ? (lang === "FR" ? "Chargement..." : "Loading...")
+                  : (lang === "FR" ? "Choisir ce plan" : "Select plan")}
               </button>
             </div>
           ))}
         </div>
 
-        <button onClick={onClose} className="btn-dark" style={{ marginTop:'20px' }}>
-          {lang === "FR" ? 'Fermer' : 'Close'}
-        </button>
+        <div style={{ textAlign: 'center', marginTop: '45px' }}>
+          <button
+            onClick={onClose}
+            style={{
+              padding: '10px 25px',
+              borderRadius: '10px',
+              border: 'none',
+              background: '#111827',
+              color: '#fff',
+              cursor: 'pointer'
+            }}
+          >
+            {lang === "FR" ? "Fermer" : "Close"}
+          </button>
+        </div>
+
       </div>
     </div>
   )
