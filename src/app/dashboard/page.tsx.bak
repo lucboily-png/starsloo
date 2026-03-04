@@ -459,7 +459,6 @@ const plans = [
 </button>
 
     </div>
-    </div>
   ))}
 </div>
 

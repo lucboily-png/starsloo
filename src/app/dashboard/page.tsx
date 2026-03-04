@@ -263,7 +263,7 @@ const plans = [
     nameFR: "Je veux l’essayer 🎯",
     nameEN: "I want to try 🎯",
     color: "#cd7f32",
-    sms: "90",
+    sms: 90,
     priceText: "$19.99/mo",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
 
@@ -287,7 +287,7 @@ const plans = [
     nameFR: "WOW 🔥",
     nameEN: "WOW 🔥",
     color: "#c0c0c0",
-    sms: "250",
+    sms: 250,
     priceText: "$29.99/mo",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
 
@@ -313,7 +313,7 @@ const plans = [
   nameFR: "Incroyable 🚀",
   nameEN: "Incredible 🚀",
   color: "#ffd700",
-  sms: "600",
+  sms: 600,
   priceText: "$49.99/mo",
   priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
 
