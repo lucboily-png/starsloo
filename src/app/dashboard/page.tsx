@@ -52,8 +52,8 @@ export default function DashboardPage() {
       />
       <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
         {lang === "FR"
-          ? "Chaque avis compte ⭐"
-          : "Every review counts ⭐"}
+          ? "La puissance des étoiles"
+          : "Th epower of stars"}
       </p>
     </div>
   );
@@ -184,13 +184,16 @@ export default function DashboardPage() {
 
   // 🔹 Create Stripe checkout
 type Plan = {
-  priceId: string
   nameFR: string
   nameEN: string
-  sms: string   // ou number si tu le changes plus tard
   color: string
+  sms: number
   priceText: string
-  advantages: string[]
+  priceId: string
+  advantages: {
+    FR: string[]
+    EN: string[]
+  }
 }
 
 async function handlePlanClick(plan: Plan) {
@@ -258,7 +261,7 @@ const plans = [
     nameFR: "Je veux l’essayer 🎯",
     nameEN: "I want to try 🎯",
     color: "#cd7f32",
-    sms: "90 SMS par mois",
+    sms: "90",
     priceText: "$19.99/mo",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
 
@@ -282,7 +285,7 @@ const plans = [
     nameFR: "WOW 🔥",
     nameEN: "WOW 🔥",
     color: "#c0c0c0",
-    sms: "250 SMS par mois",
+    sms: "250",
     priceText: "$29.99/mo",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
 
@@ -308,7 +311,7 @@ const plans = [
   nameFR: "Incroyable 🚀",
   nameEN: "Incredible 🚀",
   color: "#ffd700",
-  sms: "600 SMS par mois",
+  sms: "600",
   priceText: "$49.99/mo",
   priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
 
@@ -417,30 +420,61 @@ const plans = [
           </h1>
 		  </div>
 		  
-      {/* PLANS */}
-      <div style={{maxWidth:'1200px', margin:'60px auto', display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:'20px'}}>
-        {plans.map(plan => (
-          <div key={plan.nameFR} style={{...premiumCard, display:'flex', flexDirection:'column'}}>
-            <div style={{height:'6px', borderRadius:'6px 6px 0 0', background: plan.color, marginBottom:'10px'}}/>
-            <div style={{padding:'20px', flexGrow:1, display:'flex', flexDirection:'column'}}>
-              <h3 style={{fontSize:'22px', margin:'10px 0'}}>
-                {lang==='FR'?plan.nameFR:plan.nameEN}
-              </h3>
-              <ul style={{ fontSize:'14px', color:'#555', paddingLeft:'18px', marginBottom:'10px' }}>
-                {plan.advantages[lang].map((adv, i) => (
-  <li key={i}>{adv}</li>
-))}
-              </ul>
-			  <p></p>
-			  <p style={{margin:'5px 20px', fontSize:'15px', fontWeight:700}}>{plan.sms}</p>
-              <button onClick={()=>handlePlanClick(plan)} style={{marginTop:'15px', padding:'12px 16px', borderRadius:'10px', border:'none', background:'#364899', color:'#fff', fontWeight:600, cursor:'pointer'}}>
-                {lang==='FR'?'Choisir':'Select'}
-              </button>
-            </div>
-			<p style={{margin:'10px 20px', fontSize:'20', fontWeight:700}}>{plan.priceText}</p>
-          </div>
+    {/* Plans Section */}
+<div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center' }}>
+  {plans.map((plan) => (
+    <div
+      key={plan.priceId}
+      style={{
+        borderRadius: '10px',
+        padding: '20px',
+        width: '220px',
+        textAlign: 'center',
+        background: plan.color,
+        color: '#fff',
+        boxShadow: '0 6px 12px rgba(0,0,0,0.25)',
+      }}
+    >
+      {/* Nom du plan */}
+      <h3 style={{ marginBottom: '10px' }}>
+        {lang === 'FR' ? plan.nameFR : plan.nameEN}
+      </h3>
+
+      {/* Nombre de SMS */}
+      <p style={{ fontSize: '14px', fontWeight: 600, marginBottom: '10px' }}>
+        {plan.sms} SMS / mois
+      </p>
+
+      {/* Avantages */}
+      <ul style={{ textAlign: 'left', paddingLeft: '18px', fontSize: '13px', marginBottom: '15px' }}>
+        {(lang === 'FR' ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => (
+          <li key={i}>{adv}</li>
         ))}
-      </div>
+      </ul>
+
+      {/* Bouton */}
+      <button
+        onClick={() => handlePlanClick({
+          name: lang === 'FR' ? plan.nameFR : plan.nameEN,
+          sms: parseInt(plan.sms),
+          priceId: plan.priceId
+        })}
+        style={{
+          marginTop: '10px',
+          padding: '10px 15px',
+          borderRadius: '8px',
+          border: 'none',
+          background: '#364899',
+          color: '#fff',
+          fontWeight: 600,
+          cursor: 'pointer'
+        }}
+      >
+        {lang === 'FR' ? 'Choisir' : 'Select'}
+      </button>
+    </div>
+  ))}
+</div>
 
       {/* FOOTER ACTIONS */}
       <div style={{maxWidth:'1200px', margin:'40px auto', display:'flex', gap:'20px', justifyContent:'center'}}>
