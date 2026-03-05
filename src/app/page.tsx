@@ -87,17 +87,19 @@ export default function HomePage() {
   return (
     <div className="home-container">
       {/* LANGUAGE SWITCH */}
-      <div style={{ width: "100%", display: "flex", justifyContent: "flex-end", padding: "0 40px 20px" }}>
+      <div style={{ position: "absolute", top: "-15px", right: 70 }}>
         <button
           onClick={() => setLang(lang === "FR" ? "EN" : "FR")}
           style={{
-            padding: "8px 16px",
-            borderRadius: "6px",
-            border: "none",
-            backgroundColor: "#364899",
-            color: "#fff",
-            fontWeight: 600,
-            cursor: 'pointer'
+            padding: "30px 30px",
+              borderRadius: "20px",
+              border: "none",
+              backgroundColor: "#1e3a8a",
+              color: "#fff",
+              fontWeight: "600",
+              cursor: "pointer",
+              boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+              transition: "0.2s",
           }}
         >
           {lang === "FR" ? "EN" : "FR"}
@@ -164,6 +166,15 @@ export default function HomePage() {
       </div>
 
       {/* MARKETING SECTIONS HERO STYLE */}
+	  
+	   <section className="marketing-hero-sections">
+	  <div className="marketing-card">
+		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+          <h3>{lang === 'FR' ? ' 🎁 OBTENEZ 20 SMS GRATUITEMENT' : '🎁 GET 20 FREE SMS'}</h3>
+          <p>{lang === 'FR' ? 'Nous vous remettons 20 SMS prêts à envoyer suite à la création de votre compte .' : 'We will provide you with 20 ready-to-send SMS messages after you create your account.'}</p>
+		</div>
+      </section>
+	  
       <section className="marketing-hero-sections">
         <div className="marketing-card">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
@@ -182,7 +193,10 @@ export default function HomePage() {
           <h3>{lang === 'FR' ? 'Facile à utiliser' : 'Easy to Use'}</h3>
           <p>{lang === 'FR' ? 'Notre plateforme est intuitive et rapide, sans tracas techniques.' : 'Our platform is intuitive and hassle-free.'}</p>
 		</div>
+		
       </section>
+	  
+	
 	
       {/* HERO SECTION */}
       <section className="hero">
@@ -213,7 +227,7 @@ export default function HomePage() {
         </div>
       {/* FOOTER */}
       <div className="home-footer">
-        <p>© 2026 GoogleStars. {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
+        <p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
       </div>
 
 

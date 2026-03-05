@@ -337,8 +337,13 @@ const plans = [
 
 
  return (
-    <div>
+ <div>
+   <div style={{maxWidth:'1200px', margin:'10px auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 
+          <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
+          <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
+        </div>
+	  
       {/* LOGO */}
       <Logo lang={lang} />
 
@@ -352,10 +357,6 @@ const plans = [
             {lang==='FR' ? "Voici l'état de votre compte" : "Here is your account overview"}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
-          <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
-        </div>
       </div>
 
       {/* STATS CARDS */}
@@ -363,7 +364,7 @@ const plans = [
         <div className="dashboard-card">
           <p className="dashboard-label">{lang==='FR'?'SMS Restants':'SMS Remaining'}</p>
           <h2 className="dashboard-big-number">{smsRemaining}</h2>
-          <p style={{fontSize:'12px',color:'#777'}}>{subscription?.sms_max} total</p>
+          <p style={{fontSize:'15px',color:'#777'}}>{subscription?.sms_max} total</p>
           {subscription && (
             <div className="dashboard-progress">
               <div className="dashboard-progress-filled" style={{width:`${(subscription.sms_sent/subscription.sms_max)*100}%`}}/>
@@ -385,10 +386,10 @@ const plans = [
       </div>
 
       {/* GOOGLE LINK / SMS TEMPLATES */}
-      <div className="dashboard-card" style={{maxWidth:'1200px', margin:'40px auto'}}>
-        <h3>{lang==='FR'?'Votre message en Français ici + votre lien URL':'Your French message here + your URL link'}</h3>
-        <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name}, merci de votre passage à {business_name}. laissez nous un avis Google... + votre url (lien google ou autre)':' EX: Bonjour {client_name}, merci de votre passage chez {business.name}. Laisser nous un avis Google...  + your url link here (google review link or other)'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
-        <h3>{lang==='FR'?'Votre message en anglais ici + votre lien URL':'Your English message here + your URL link'}</h3>
+      <div className="dashboard-card2" style={{maxWidth:'1200px', margin:'50px auto'}}>
+        <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien URL':'Enter your French message here + your URL link'}</h3>
+        <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name}, merci de votre passage à {business_name}. Laissez-nous un avis Google... + votre url (lien google ou autre)':' EX: Bonjour {client_name}, merci de votre passage chez {business.name}. Laisser-nous un avis Google...  + your url link here (google review link or other)'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
+        <h3>{lang==='FR'?'Inscrire votre message en anglais ici + votre lien URL':'Enter your English message here + your URL link'}</h3>
 		<input type="text" placeholder={lang==='FR'?'EX: Hi {client_name}, thank you for your visit at {business_name}. Let us a Google review... + votre url (lien google ou autre)':'EX: Hi [First Name], thanks for visiting us at {business.name}. Your Google review means a lot for us... + your url link here (google review link or other)'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
         <button onClick={async ()=>{
           if(!business) return
@@ -403,7 +404,7 @@ const plans = [
 
       {/* SEND SMS */}
       {subscription && (
-        <div className="dashboard-card" style={{maxWidth:'1200px', margin:'0 auto 40px auto'}}>
+        <div className="dashboard-card2" style={{maxWidth:'1200px', margin:'0 auto 40px auto'}}>
           <h3>{lang==='FR'?'Envoyer un SMS':'Send SMS'}</h3>
           <div style={{display:'flex',gap:'15px',flexWrap:'wrap'}}>
             <input type="text" placeholder={lang==='FR'?'Prénom':'First name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>
@@ -417,8 +418,8 @@ const plans = [
       )}
 
 		<div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700 }}>
-            {lang==='FR' ? `Choisissez votre plan ✔️` : `Chose your plan ✔️`}
+		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
+            {lang==='FR' ? `Choisissez votre plan` : `Chose your plan`}
           </h1>
 		  </div>
 		  
@@ -505,7 +506,7 @@ const plans = [
         onClick={() => handlePlanClick(plan)}
         style={{
           marginTop: 'auto',
-          padding: '12px',
+          padding: '15px',
           borderRadius: '10px',
           border: 'none',
           background: '#28A7C9',

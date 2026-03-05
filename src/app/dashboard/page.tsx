@@ -36,8 +36,15 @@ export default function DashboardPage() {
   const [smsTemplateFR, setSmsTemplateFR] = useState('')
   const [smsTemplateEN, setSmsTemplateEN] = useState('')
   
-
   const pathname = usePathname();
+  
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
+
+const toggleFaq = (index: number) => {
+  setOpenFaq(openFaq === index ? null : index)
+}
+
+
 
   // Si l'URL contient /en → logo anglais
   const isEnglish = pathname.startsWith("/en");
@@ -337,8 +344,13 @@ const plans = [
 
 
  return (
-    <div>
+ <div>
+   <div style={{maxWidth:'1200px', margin:'10px auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 
+          <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
+          <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
+        </div>
+	  
       {/* LOGO */}
       <Logo lang={lang} />
 
@@ -352,10 +364,6 @@ const plans = [
             {lang==='FR' ? "Voici l'état de votre compte" : "Here is your account overview"}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
-          <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
-        </div>
       </div>
 
       {/* STATS CARDS */}
@@ -363,7 +371,7 @@ const plans = [
         <div className="dashboard-card">
           <p className="dashboard-label">{lang==='FR'?'SMS Restants':'SMS Remaining'}</p>
           <h2 className="dashboard-big-number">{smsRemaining}</h2>
-          <p style={{fontSize:'12px',color:'#777'}}>{subscription?.sms_max} total</p>
+          <p style={{fontSize:'15px',color:'#777'}}>{subscription?.sms_max} total</p>
           {subscription && (
             <div className="dashboard-progress">
               <div className="dashboard-progress-filled" style={{width:`${(subscription.sms_sent/subscription.sms_max)*100}%`}}/>
@@ -385,10 +393,10 @@ const plans = [
       </div>
 
       {/* GOOGLE LINK / SMS TEMPLATES */}
-      <div className="dashboard-card" style={{maxWidth:'1200px', margin:'40px auto'}}>
-        <h3>{lang==='FR'?'Votre message en Français ici + votre lien URL':'Your French message here + your URL link'}</h3>
+      <div className="dashboard-card2" style={{maxWidth:'1200px', margin:'50px auto'}}>
+        <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien URL':'Enter your French message here + your URL link'}</h3>
         <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name}, merci de votre passage à {business_name}. Laissez-nous un avis Google... + votre url (lien google ou autre)':' EX: Bonjour {client_name}, merci de votre passage chez {business.name}. Laisser-nous un avis Google...  + your url link here (google review link or other)'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
-        <h3>{lang==='FR'?'Votre message en anglais ici + votre lien URL':'Your English message here + your URL link'}</h3>
+        <h3>{lang==='FR'?'Inscrire votre message en anglais ici + votre lien URL':'Enter your English message here + your URL link'}</h3>
 		<input type="text" placeholder={lang==='FR'?'EX: Hi {client_name}, thank you for your visit at {business_name}. Let us a Google review... + votre url (lien google ou autre)':'EX: Hi [First Name], thanks for visiting us at {business.name}. Your Google review means a lot for us... + your url link here (google review link or other)'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
         <button onClick={async ()=>{
           if(!business) return
@@ -403,7 +411,7 @@ const plans = [
 
       {/* SEND SMS */}
       {subscription && (
-        <div className="dashboard-card" style={{maxWidth:'1200px', margin:'0 auto 40px auto'}}>
+        <div className="dashboard-card2" style={{maxWidth:'1200px', margin:'0 auto 40px auto'}}>
           <h3>{lang==='FR'?'Envoyer un SMS':'Send SMS'}</h3>
           <div style={{display:'flex',gap:'15px',flexWrap:'wrap'}}>
             <input type="text" placeholder={lang==='FR'?'Prénom':'First name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>
@@ -417,8 +425,8 @@ const plans = [
       )}
 
 		<div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700 }}>
-            {lang==='FR' ? `Choisissez votre plan ✔️` : `Chose your plan ✔️`}
+		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
+            {lang==='FR' ? `Choisissez votre plan` : `Chose your plan`}
           </h1>
 		  </div>
 		  
@@ -505,7 +513,7 @@ const plans = [
         onClick={() => handlePlanClick(plan)}
         style={{
           marginTop: 'auto',
-          padding: '12px',
+          padding: '15px',
           borderRadius: '10px',
           border: 'none',
           background: '#28A7C9',
@@ -562,7 +570,87 @@ const plans = [
           <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
         </div>
 		
-		
+		{/* FAQ SECTION */}
+<section style={{
+  maxWidth: '800px',
+  margin: '60px auto',
+  padding: '0 20px'
+}}>
+  <h2 style={{
+    textAlign: 'center',
+    fontSize: '28px',
+    marginBottom: '40px',
+    fontWeight: 700
+  }}>
+    {lang === 'FR' ? 'Questions fréquentes' : 'Frequently Asked Questions'}
+  </h2>
+
+  {[
+    {
+      questionFR: "Comment fonctionnent les SMS ?",
+      answerFR: "Les SMS sont envoyés directement depuis votre tableau de bord. Vous écrivez votre message, ajoutez le numéro du client et l’envoi se fait instantanément.",
+      questionEN: "How does SMS sending work?",
+      answerEN: "SMS messages are sent directly from your dashboard. Simply write your message, add the customer’s number, and it is sent instantly."
+    },
+    {
+      questionFR: "Les SMS sont-ils envoyés automatiquement ?",
+      answerFR: "Non. Vous gardez le contrôle total. Les messages sont envoyés manuellement par vous depuis la plateforme.",
+      questionEN: "Are messages sent automatically?",
+      answerEN: "No. You remain in full control. Messages are manually sent by you from the platform."
+    },
+    {
+      questionFR: "Puis-je changer de plan à tout moment ?",
+      answerFR: "Oui, vous pouvez modifier ou annuler votre abonnement à tout moment depuis votre tableau de bord.",
+      questionEN: "Can I change my plan anytime?",
+      answerEN: "Yes, you can upgrade or cancel your subscription anytime directly from your dashboard."
+    },
+    {
+      questionFR: "Que se passe-t-il si je dépasse mon forfait ?",
+      answerFR: "Si vous atteignez votre limite mensuelle, vous pourrez passer au plan supérieur pour continuer à envoyer des SMS.",
+      questionEN: "What happens if I exceed my plan?",
+      answerEN: "If you reach your monthly limit, you can upgrade your plan to continue sending messages."
+    }
+  ].map((faq, index) => (
+    <div key={index} style={{
+      borderBottom: '1px solid #eee',
+      padding: '15px 0',
+      cursor: 'pointer'
+    }}>
+      <div
+        onClick={() => toggleFaq(index)}
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontWeight: 600,
+          fontSize: '16px'
+        }}
+      >
+        {lang === 'FR' ? faq.questionFR : faq.questionEN}
+        <span style={{
+          fontSize: '20px',
+          transition: 'transform 0.3s',
+          transform: openFaq === index ? 'rotate(45deg)' : 'rotate(0deg)'
+        }}>
+          +
+        </span>
+      </div>
+
+      <div style={{
+        maxHeight: openFaq === index ? '200px' : '0px',
+        overflow: 'hidden',
+        transition: 'all 0.3s ease',
+        opacity: openFaq === index ? 1 : 0,
+        marginTop: openFaq === index ? '10px' : '0px',
+        fontSize: '14px',
+        color: '#555'
+      }}>
+        {lang === 'FR' ? faq.answerFR : faq.answerEN}
+      </div>
+    </div>
+  ))}
+</section>
+
       {/* FOOTER */}
       <div className="home-footer">
         <p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>

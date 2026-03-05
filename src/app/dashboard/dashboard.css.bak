@@ -10,7 +10,15 @@
 }
 
 .dashboard-card {
-  background: #fff;
+  background: #BEE0EB;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.dashboard-card2 {
+  background: #DCF3FA;
   padding: 20px;
   border-radius: 18px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.05);
@@ -22,13 +30,13 @@
 }
 
 .dashboard-label {
-  font-size: 12px;
-  color: #666;
+  font-size: 20px;
+  color: #218FB0;
   margin-bottom: 5px;
 }
 
 .dashboard-big-number {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   margin: 5px 0 10px 0;
 }
