@@ -142,25 +142,29 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      inset: 0,
-      background: 'rgba(0,0,0,0.55)',
-      backdropFilter: 'blur(5px)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
-    }}>
+   <div style={{
+  position: 'fixed',
+  inset: 0,
+  background: 'rgba(0,0,0,0.55)',
+  backdropFilter: 'blur(5px)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'flex-start',
+  overflowY: 'auto',
+  padding: '40px 20px',
+  zIndex: 1000
+}}>
       <div style={{
-        width: '95%',
-        maxWidth: '1100px',
-        background: '#ffffff',
-        borderRadius: '22px',
-        padding: '45px',
-        boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
-        position: 'relative'
-      }}>
+  width: '95%',
+  maxWidth: '1100px',
+  background: '#ffffff',
+  borderRadius: '22px',
+  padding: '45px',
+  boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
+  position: 'relative',
+  maxHeight: '90vh',
+  overflowY: 'auto'
+}}>
 
         <h2 style={{
           textAlign: 'center',
