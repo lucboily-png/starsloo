@@ -135,7 +135,7 @@ const toggleFaq = (index: number) => {
       const response = await fetch('/api/send-sms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: clientPhone, message })
+        body: JSON.stringify({ to: clientPhone, message, clientName })
       })
       const data = await response.json()
       if (!response.ok) return alert((lang==='FR' ? 'Erreur Twilio: ' : 'Twilio error: ') + data.error)
@@ -321,7 +321,7 @@ const plans = [
   color: "#28A7C9",
   sms: 600,
   priceText: "$49.95",
-  priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
+  priceId: "price_1T7etbI2YBJOFjNSXbvuAUkY",
 
   advantages: {
     FR: [
