@@ -6,6 +6,7 @@ import Image from 'next/image'
 import './home.css'
 import { usePathname } from "next/navigation";
 
+	
 export default function HomePage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -66,6 +67,29 @@ export default function HomePage() {
     }
     setContactLoading(false)
   }
+  
+  const [visits, setVisits] = useState<number | null>(null)
+
+useEffect(() => {
+  const trackVisit = async () => {
+    // 1️⃣ Incrémente
+    await supabase.rpc('increment_visits')
+
+    // 2️⃣ Récupère la valeur
+    const { data, error } = await supabase
+      .from('site_stats')
+      .select('visits')
+      .eq('id', 1)
+      .single()
+
+    if (!error && data) {
+      setVisits(data.visits)
+    }
+  }
+
+  trackVisit()
+}, [])
+
 
   function Logo({ lang }: { lang: "FR" | "EN" }) {
   return (
