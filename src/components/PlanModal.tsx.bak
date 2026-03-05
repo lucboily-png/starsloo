@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { loadStripe } from '@stripe/stripe-js'
 
 type Plan = {
   nameFR: string
@@ -31,22 +30,22 @@ const plans: Plan[] = [
   {
     nameFR: "Je veux l’essayer 🎯",
     nameEN: "Starter 🎯",
-    sms: "90 SMS",
-    priceText: "$19.99",
+    sms: "100 SMS",
+    priceText: "$19.95",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
-    color: "#1e293b",
+    color: "#ffffff",
     advantages: {
       FR: [
         "Collecte d’avis Google simplifiée",
-        "Automatisation SMS",
-        "Dashboard inclus",
+        "Volume de SMS de base",
+        "Accès au Dashboard",
         "Support email"
       ],
       EN: [
-        "Easy Google review collection",
-        "SMS automation",
-        "Dashboard access",
-        "Email support"
+        "Simplified Google review collection",
+		"Basic SMS volume",
+		"Access to the Dashboard",
+		"Email support"
       ]
     },
     modalContent: {
@@ -58,15 +57,15 @@ const plans: Plan[] = [
     nameFR: "WOW 🔥",
     nameEN: "Growth 🔥",
     sms: "250 SMS",
-    priceText: "$29.99",
+    priceText: "$29.95",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
-    color: "#1e293b",
+    color: "#ffffff",
     advantages: {
       FR: [
         "Augmentez vos avis rapidement",
         "Plus de volume SMS",
-        "Statistiques avancées",
-        "Support prioritaire"
+        "Accès au Dashboard",
+        "Support email"
       ],
       EN: [
         "Boost reviews faster",
@@ -84,15 +83,17 @@ const plans: Plan[] = [
     nameFR: "Incroyable 🚀",
     nameEN: "Pro 🚀",
     sms: "600 SMS",
-    priceText: "$49.99",
+    priceText: "$49.95",
     priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
-    color: "#111827",
+    color: "#ffffff",
     advantages: {
       FR: [
+		"Boostre vos avis Google",
         "Volume SMS élevé",
-        "Analytics complètes",
+        "Accès au Dashboard",
         "Optimisation maximale des avis",
-        "Support ultra-prioritaire"
+        "Faites du SMS Marketing",
+		"Support email"
       ],
       EN: [
         "High SMS volume",
@@ -116,6 +117,7 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
   const handlePlanClick = async (plan: Plan) => {
     try {
       setLoading(true)
+
       const res = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -124,7 +126,7 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
           businessId,
           planName: lang === "FR" ? plan.nameFR : plan.nameEN,
           smsMax: parseInt(plan.sms.replace(/\D/g, ''))
-        }),
+        })
       })
 
       const data = await res.json()
@@ -139,128 +141,149 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
 
   return (
     <div style={{
-      position:'fixed',
-      inset:0,
-      background:'rgba(0,0,0,0.6)',
-      display:'flex',
-      justifyContent:'center',
-      alignItems:'center',
-      zIndex:1000
+      position: 'fixed',
+      inset: 0,
+      background: 'rgba(0,0,0,0.55)',
+      backdropFilter: 'blur(5px)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
     }}>
       <div style={{
-        background:'#f8fafc',
-        padding:'40px',
-        borderRadius:'20px',
-        width:'95%',
-        maxWidth:'1100px'
+        width: '95%',
+        maxWidth: '1100px',
+        background: '#ffffff',
+        borderRadius: '22px',
+        padding: '45px',
+        boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
+        position: 'relative'
       }}>
+
         <h2 style={{
-          textAlign:'center',
-          marginBottom:'40px',
-          fontSize:'28px'
+          textAlign: 'center',
+          fontSize: '28px',
+          fontWeight: 800,
+          marginBottom: '45px'
         }}>
           {lang === "FR" ? "Choisissez votre plan" : "Choose your plan"}
         </h2>
 
         <div style={{
-          display:'flex',
-          gap:'30px',
-          justifyContent:'center',
-          flexWrap:'wrap'
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: '30px'
         }}>
           {plans.map((plan, index) => (
             <div
               key={plan.priceId}
               style={{
-                background: plan.color,
-                color:'#fff',
-                borderRadius:'18px',
-                padding:'30px',
-                width:'280px',
-                boxShadow:'0 15px 30px rgba(0,0,0,0.2)',
-                transform: index === 1 ? 'scale(1.05)' : 'scale(1)',
-                transition:'0.3s'
+                borderRadius: '18px',
+                padding: '35px',
+                background: '#ffffff',
+                boxShadow: '0 15px 35px rgba(0,0,0,0.06)',
+                border: index === 1 ? '2px solid #28A7C9' : '1px solid #eee',
+                transform: index === 1 ? 'scale(1.03)' : 'scale(1)',
+                transition: '0.25s',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between'
               }}
             >
-              <u><h3 style={{  fontSize:'20px', marginBottom:'10px' }}>
-                {lang === "FR" ? plan.nameFR : plan.nameEN}
-              </h3></u>
+              <div>
+                <h3 style={{
+                  fontSize: '22px',
+                  fontWeight: 700,
+                  marginBottom: '12px'
+                }}>
+                  {lang === "FR" ? plan.nameFR : plan.nameEN}
+                </h3>
 
-              <p style={{
-				 
-                fontSize:'20px',
-                opacity:0.8,
-                marginBottom:'20px',
-                minHeight:'50px'
-              }}>
-                {lang === "FR"
-                  ? plan.modalContent?.FR
-                  : plan.modalContent?.EN}
-              </p>
+                <div style={{ marginBottom: '18px' }}>
+                  <span style={{
+                    fontSize: '30px',
+                    fontWeight: 800,
+                    color: '#28A7C9'
+                  }}>
+                    {plan.priceText}
+                  </span>
+                  <span style={{ fontSize: '14px', color: '#777' }}>
+                    {lang === "FR" ? " / mois" : " / month"}
+                  </span>
+                  <div style={{ fontSize: '14px', marginTop: '6px', color: '#555' }}>
+                    {plan.sms}
+                  </div>
+                </div>
 
-              <ul style={{
-                fontSize:'13px',
-                paddingLeft:'18px',
-                marginBottom:'25px',
-                lineHeight:'1.6'
-              }}>
-                {(lang === "FR"
-                  ? plan.advantages.FR
-                  : plan.advantages.EN).map((adv, i) => (
-                  <li key={i}>{adv}</li>
-                ))}
-              </ul>
+                <ul style={{
+                  paddingLeft: '18px',
+                  marginBottom: '20px',
+                  color: '#444',
+                  lineHeight: '1.6'
+                }}>
+                  {(lang === "FR"
+                    ? plan.advantages.FR
+                    : plan.advantages.EN
+                  ).map((adv, i) => (
+                    <li key={i} style={{ marginBottom: '6px' }}>
+                      {adv}
+                    </li>
+                  ))}
+                </ul>
+
+                {plan.modalContent && (
+                  <p style={{
+                    fontSize: '13px',
+                    fontStyle: 'italic',
+                    color: '#777'
+                  }}>
+                    {lang === "FR"
+                      ? plan.modalContent.FR
+                      : plan.modalContent.EN}
+                  </p>
+                )}
+              </div>
 
               <button
                 onClick={() => handlePlanClick(plan)}
                 disabled={loading}
                 style={{
-                  width:'100%',
-                  padding:'12px',
-                  borderRadius:'10px',
-                  border:'none',
-                  background:'#22c55e',
-                  color:'#fff',
-                  fontWeight:700,
-                  fontSize:'15px',
-                  cursor:'pointer',
-                  marginBottom:'15px'
+                  marginTop: '25px',
+                  padding: '12px',
+                  borderRadius: '10px',
+                  border: 'none',
+                  background: '#28A7C9',
+                  color: '#fff',
+                  fontWeight: 700,
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                  width: '100%'
                 }}
               >
                 {loading
                   ? (lang === "FR" ? "Chargement..." : "Loading...")
-                  : (lang === "FR" ? "Choisir" : "Select")}
+                  : (lang === "FR" ? "Choisir ce plan" : "Select plan")}
               </button>
-
-              {/* PRIX + SMS EN BAS */}
-              <div style={{ textAlign:'center' }}>
-                <div style={{ fontSize:'24px', fontWeight:800 }}>
-                  {plan.priceText}
-                  <span style={{ fontSize:'12px', opacity:0.7 }}> /mo</span>
-                </div>
-                <div style={{ fontSize:'13px', opacity:0.8 }}>
-                  {plan.sms}
-                </div>
-              </div>
             </div>
           ))}
         </div>
 
-        <div style={{ textAlign:'center', marginTop:'40px' }}>
+        <div style={{ textAlign: 'center', marginTop: '45px' }}>
           <button
             onClick={onClose}
             style={{
-              padding:'10px 25px',
-              borderRadius:'10px',
-              border:'none',
-              background:'#1f2937',
-              color:'#fff',
-              cursor:'pointer'
+              padding: '10px 25px',
+              borderRadius: '10px',
+              border: 'none',
+              background: '#111827',
+              color: '#fff',
+              cursor: 'pointer'
             }}
           >
             {lang === "FR" ? "Fermer" : "Close"}
           </button>
         </div>
+
       </div>
     </div>
   )

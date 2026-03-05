@@ -30,22 +30,22 @@ const plans: Plan[] = [
   {
     nameFR: "Je veux l’essayer 🎯",
     nameEN: "Starter 🎯",
-    sms: "90 SMS",
-    priceText: "$19.99",
+    sms: "100 SMS",
+    priceText: "$19.95",
     priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
     color: "#ffffff",
     advantages: {
       FR: [
         "Collecte d’avis Google simplifiée",
-        "Automatisation SMS",
-        "Dashboard inclus",
+        "Volume de SMS de base",
+        "Accès au Dashboard",
         "Support email"
       ],
       EN: [
-        "Easy Google review collection",
-        "SMS automation",
-        "Dashboard access",
-        "Email support"
+        "Simplified Google review collection",
+		"Basic SMS volume",
+		"Access to the Dashboard",
+		"Email support"
       ]
     },
     modalContent: {
@@ -57,21 +57,21 @@ const plans: Plan[] = [
     nameFR: "WOW 🔥",
     nameEN: "Growth 🔥",
     sms: "250 SMS",
-    priceText: "$29.99",
+    priceText: "$29.95",
     priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
     color: "#ffffff",
     advantages: {
       FR: [
         "Augmentez vos avis rapidement",
         "Plus de volume SMS",
-        "Statistiques avancées",
-        "Support prioritaire"
+        "Accès au Dashboard",
+        "Support email"
       ],
       EN: [
-        "Boost reviews faster",
-        "Higher SMS volume",
-        "Advanced analytics",
-        "Priority support"
+        "Increase your reviews quickly",
+		"More SMS volume",
+		"Access to the Dashboard",
+		"Email support"
       ]
     },
     modalContent: {
@@ -83,21 +83,25 @@ const plans: Plan[] = [
     nameFR: "Incroyable 🚀",
     nameEN: "Pro 🚀",
     sms: "600 SMS",
-    priceText: "$49.99",
+    priceText: "$49.95",
     priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
     color: "#ffffff",
     advantages: {
       FR: [
+		"Booster vos avis Google",
         "Volume SMS élevé",
-        "Analytics complètes",
+        "Accès au Dashboard",
         "Optimisation maximale des avis",
-        "Support ultra-prioritaire"
+        "Faites du SMS Marketing",
+		"Support email"
       ],
       EN: [
+        "Boost your Google reviews",
         "High SMS volume",
-        "Full analytics",
+        "Access to the Dashboard",
         "Maximum review optimization",
-        "Ultra priority support"
+		"Use SMS Marketing",
+        "Email support"
       ]
     },
     modalContent: {

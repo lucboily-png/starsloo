@@ -391,14 +391,14 @@ const plans = [
           <h2 className="dashboard-big-number" style={{color: subscription?.status==='active'? '#16a34a':'#dc2626'}}>{subscription?.status || '-'}</h2>
         </div>
       </div>
-<div style={{maxWidth:'1200px', margin:'30px 20px -50px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+<div style={{maxWidth:'1200px', margin:'20px 20px -50px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
             {lang==='FR' ? `Étape 1` : `Step 1`}
           </h1>
 		  </div>
 		  
       {/* GOOGLE LINK / SMS TEMPLATES */}
-      <div className="dashboard-card2" style={{maxWidth:'1200px', margin:'50px auto'}}>
+      <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'50px auto'}}>
         <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien URL':'Enter your French message here + your URL link'}</h3>
         <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name}, merci de votre passage à {business_name}. Laissez-nous un avis Google... + votre url (lien google ou autre)':' EX: Bonjour {client_name}, merci de votre passage chez {business.name}. Laisser-nous un avis Google...  + your url link here (google review link or other)'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
         <h3>{lang==='FR'?'Inscrire votre message en anglais ici + votre lien URL':'Enter your English message here + your URL link'}</h3>
@@ -413,7 +413,7 @@ const plans = [
         }} className="dashboard-button">{lang==='FR'?'Sauvegarder':'Save'}</button>
       </div>	  
 
-<div style={{maxWidth:'1200px', margin:'40px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+		<div style={{maxWidth:'1200px', margin:'40px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
             {lang==='FR' ? `Étape 2` : `Step 2`}
           </h1>
@@ -427,14 +427,14 @@ const plans = [
             <input type="text" placeholder={lang==='FR'?'Prénom':'First name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>
             <input type="text" placeholder={lang==='FR'?'Téléphone':'Phone'} value={clientPhone} onChange={(e)=>setClientPhone(e.target.value)} className="dashboard-input"/>
           </div>
-          <div style={{marginTop:'15px',display:'flex',gap:'10px'}}>
-            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">FR</button>
-            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">EN</button>
+          <div style={{marginTop:'15px',display:'flex',gap:'15px'}}>
+            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">Envoyer en FR</button>
+            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">Envoyer en EN</button>
           </div>
         </div>
       )}
 
-		<div style={{maxWidth:'1200px', margin:'40px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+		<div style={{maxWidth:'1200px', margin:'50px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
             {lang==='FR' ? `Choisissez votre plan` : `Chose your plan`}
           </h1>
@@ -607,11 +607,17 @@ const plans = [
         questionEN: "How does SMS sending work?",
         answerEN: "Messages are sent directly from your dashboard. Simply write your message, add the customer's number, and it is delivered instantly."
       },
+	  {
+        questionFR: "Comment obtenir mon premier Avis Google par SMS",
+        answerFR: "Compléter l'Étape 1 un peu plus haut sur cette page, ce sera ce message qui sera envoyé à votre client. Par exemple: Bonjour {client_name}! Suite à votre visite chez {business_name} nous aimerions avoir votre avis... + le lien de votre URL Avis Google ou de votre site web si vous envoyer un SMS Marketing. ATTENTION: Il faudra concerver ceci: {client_name} et {business_name} afin de personaliser votre message. Si vous envoyer que des messages en français, vous pouvez remplir que la partie Message en français et faire Sauvegarder afin d'enregistrer votre message. Ensuite à l'Étape 2, vous remplissez Prénom et # de tél et cliquer sur le bouton envoyer pour envoyer votre message dans la langue de votre choix.",
+        questionEN: "How to get my first Google review via SMS",
+        answerEN: "Complete Step 1 above on this page. This section will be the message that will be sent to your client. For example: Hello {client_name}! Following your visit to {business_name}, we would like to have your feedback... + the link to your Google review URL or your website if you are sending an SMS marketing message. IMPORTANT: You will need to keep {client_name} and {business_name} to personalize your message. If you are only sending messages in French, you can fill in only the French Message section and click Save to save your message. Then, in Step 2, fill in First Name and Phone Number and click the Send button to send your message in the language of your choice."
+      },
       {
         questionFR: "Les SMS sont-ils automatiques ?",
         answerFR: "Non. Vous gardez le contrôle total. Chaque message est envoyé manuellement par vous.",
         questionEN: "Are messages automated?",
-        answerEN: "No. You stay in full control. Every message is manually sent by you."
+        answerEN: "No. You stay in full control. Every message is manually sent by you." 
       },
       {
         questionFR: "Puis-je changer de plan à tout moment ?",
@@ -620,10 +626,16 @@ const plans = [
         answerEN: "Yes. You can upgrade or cancel your subscription anytime from your dashboard."
       },
       {
-        questionFR: "Que se passe-t-il si je dépasse mon forfait ?",
-        answerFR: "Lorsque votre limite mensuelle est atteinte, vous pouvez passer au plan supérieur pour continuer vos envois.",
-        questionEN: "What happens if I exceed my limit?",
-        answerEN: "Once you reach your monthly limit, you can upgrade your plan to continue sending messages."
+        questionFR: "Que se passe-t-il si je dépasse ma limite de SMS ?",
+        answerFR: "Si votre limite mensuelle est atteinte, il vous sera possible d'acheter un bloc de SMS supplémentaire ou encore passer au plan supérieur pour continuer vos envois.",
+        questionEN: "What happens if I exceed my SMS limit?",
+        answerEN: "If you reach your monthly limit, you can purchase an additional SMS block or upgrade to a higher plan to continue sending messages."
+      },
+	  {
+        questionFR: "Parcequ'on est une équipe extraordinaire, voici quelques messages déjà fait pour vous",
+        answerFR: "Bonjour {client_name}! Merci pour votre visite chez {business_name}. Votre avis compte énormément pour nous 🙏 Vous pouvez nous laisser un commentaire ici : [LIEN_AVIS - Bonjour {client_name}, suite à votre passage chez {business_name}, nous aimerions connaître votre expérience. Cela ne prend qu’une minute : [LIEN_AVIS - Merci d’avoir choisi {business_name}, {client_name}! Si vous avez apprécié votre visite, un petit avis nous aiderait beaucoup 😊 [LIEN_AVIS] - Salut {client_name}! On espère que vous avez adoré votre expérience chez {business_name} 🤍 Un petit avis ici nous ferait vraiment plaisir : [LIEN_AVIS] - Bonjour {client_name}! Toute l’équipe de {business_name} vous remercie 🙌 Si vous avez 30 secondes, voici le lien pour nous laisser votre avis : [LIEN_AVIS] - Bonjour {client_name}, votre retour nous aide à offrir un service toujours meilleur chez {business_name}. Dites-nous ce que vous en pensez ici : [LIEN_AVIS] - Bonjour {client_name}! Merci d’avoir choisi {business_name}. Cliquez ici pour laisser votre avis : [LIEN_AVIS] ",
+        questionEN: "Because we're an extraordinary team, here are some messages already written for you.",
+        answerEN: "Hello {client_name}! Thank you for visiting {business_name}. Your opinion means a lot to us 🙏 You can leave us a review here: [REVIEW_LINK] - Hello {client_name}, following your visit to {business_name}, we would like to know about your experience. It only takes a minute: [REVIEW_LINK] - Thank you for choosing {business_name}, {client_name}! If you enjoyed your visit, a short review would help us a lot 😊 [REVIEW_LINK] - Hi {client_name}! We hope you loved your experience at {business_name} 🤍 A short review here would really make us happy: [REVIEW_LINK] - Hello {client_name}! The entire {business_name} team thanks you 🙌 If you have 30 seconds, here's the link to leave us your review: [REVIEW_LINK] - Hello {client_name}, your feedback helps us provide even better service at {business_name}. Tell us what you think here: [REVIEW_LINK] - Hello {client_name}! Thank you for choosing {business_name}. Click here to leave your review: [REVIEW_LINK]"
       }
     ].map((faq, index) => (
       <div key={index} style={{
@@ -682,13 +694,13 @@ const plans = [
   </div>
 </section>
 
+ {/* LOGO */}
+      <Logo lang={lang} />
+
       {/* FOOTER */}
       <div className="home-footer">
         <p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
       </div>
-
-
-   
 	  
 	  
       {/* Plan Modal */}
