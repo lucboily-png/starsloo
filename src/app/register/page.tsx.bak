@@ -257,9 +257,9 @@ console.log("Business insert result:", businessData, businessError);
   onClick={() => router.push("/")}
   style={{
     position: "absolute",  // pour le placer en haut à gauche ou droite
-	top: "-30px",
+	top: "-45px",
     left: "0px",
-    padding: "40px 40px 20px 40px",
+    padding: "20px 40px 20px 40px",
     borderRadius: "20px",
     border: "none",
     backgroundColor: "#1e3a8a",

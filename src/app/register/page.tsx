@@ -259,7 +259,7 @@ console.log("Business insert result:", businessData, businessError);
     position: "absolute",  // pour le placer en haut à gauche ou droite
 	top: "-45px",
     left: "0px",
-    padding: "40px 40px 20px 40px",
+    padding: "30px 40px 20px 40px",
     borderRadius: "20px",
     border: "none",
     backgroundColor: "#1e3a8a",

@@ -71,6 +71,8 @@ export default function HomePage() {
   const [visits, setVisits] = useState<number | null>(null)
 
 useEffect(() => {
+	  console.log("TRACK VISIT TRIGGERED")
+	  
   const trackVisit = async () => {
     // 1️⃣ Incrémente
     await supabase.rpc('increment_visits')

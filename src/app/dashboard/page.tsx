@@ -391,7 +391,12 @@ const plans = [
           <h2 className="dashboard-big-number" style={{color: subscription?.status==='active'? '#16a34a':'#dc2626'}}>{subscription?.status || '-'}</h2>
         </div>
       </div>
-
+<div style={{maxWidth:'1200px', margin:'30px 20px -50px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
+            {lang==='FR' ? `Étape 1` : `Step 1`}
+          </h1>
+		  </div>
+		  
       {/* GOOGLE LINK / SMS TEMPLATES */}
       <div className="dashboard-card2" style={{maxWidth:'1200px', margin:'50px auto'}}>
         <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien URL':'Enter your French message here + your URL link'}</h3>
@@ -408,6 +413,11 @@ const plans = [
         }} className="dashboard-button">{lang==='FR'?'Sauvegarder':'Save'}</button>
       </div>	  
 
+<div style={{maxWidth:'1200px', margin:'40px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
+            {lang==='FR' ? `Étape 2` : `Step 2`}
+          </h1>
+		  </div>
 
       {/* SEND SMS */}
       {subscription && (
@@ -424,7 +434,7 @@ const plans = [
         </div>
       )}
 
-		<div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+		<div style={{maxWidth:'1200px', margin:'50px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
             {lang==='FR' ? `Choisissez votre plan` : `Chose your plan`}
           </h1>

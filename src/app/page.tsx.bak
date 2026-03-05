@@ -70,8 +70,6 @@ export default function HomePage() {
   
   const [visits, setVisits] = useState<number | null>(null)
 
-const [visits, setVisits] = useState<number | null>(null)
-
 useEffect(() => {
   const trackVisit = async () => {
     // 1️⃣ Incrémente
