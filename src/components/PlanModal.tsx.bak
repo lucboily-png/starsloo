@@ -155,14 +155,16 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
   zIndex: 1000
 }}>
       <div style={{
-        width: '95%',
-        maxWidth: '1100px',
-        background: '#ffffff',
-        borderRadius: '22px',
-        padding: '45px',
-        boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
-        position: 'relative'
-      }}>
+  width: '95%',
+  maxWidth: '1100px',
+  background: '#ffffff',
+  borderRadius: '22px',
+  padding: '45px',
+  boxShadow: '0 25px 60px rgba(0,0,0,0.15)',
+  position: 'relative',
+  maxHeight: '90vh',
+  overflowY: 'auto'
+}}>
 
         <h2 style={{
           textAlign: 'center',

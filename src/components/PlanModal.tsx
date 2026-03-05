@@ -176,10 +176,12 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
         </h2>
 
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '30px'
-        }}>
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 280px))',
+  justifyContent: 'center',
+  gap: '30px',
+  width: '100%'
+}}>
           {plans.map((plan, index) => (
             <div
               key={plan.priceId}
