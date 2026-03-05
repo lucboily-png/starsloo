@@ -135,7 +135,7 @@ const toggleFaq = (index: number) => {
       const response = await fetch('/api/send-sms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: clientPhone, message, clientName })
+        body: JSON.stringify({ to: clientPhone, message, name })
       })
       const data = await response.json()
       if (!response.ok) return alert((lang==='FR' ? 'Erreur Twilio: ' : 'Twilio error: ') + data.error)

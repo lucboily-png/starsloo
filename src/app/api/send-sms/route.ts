@@ -14,7 +14,7 @@ const client = twilio(
 
 export async function POST(req: NextRequest) {
   try {
-    const { to, message, name } = await req.json();
+    const { to, message, clientName } = await req.json();
 
     const sms = await client.messages.create({
       body: message,
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
     await supabase.from("sms_logs").insert({
       client_phone: to,
-      client_name: name || null,
+      client_name: clientName || null,
       message: message,
       twilio_sid: sms.sid,
       status: "sent",
