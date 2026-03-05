@@ -272,7 +272,7 @@ const plans = [
     color: "#28A7C9",
     sms: 100,
     priceText: "$19.95",
-    priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
+    priceId: "price_1T7erWI2YBJOFjNSfQ9P8384",
     advantages: {
       FR: [
         "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
@@ -295,7 +295,7 @@ const plans = [
     color: "#28A7C9",
     sms: 250,
     priceText: "$29.95",
-    priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
+    priceId: "price_1T7esYI2YBJOFjNSzNKtBx3n",
 
     advantages: {
       FR: [
@@ -421,7 +421,7 @@ const plans = [
 
       {/* SEND SMS */}
       {subscription && (
-        <div className="dashboard-card2" style={{maxWidth:'1200px', margin:'0 auto 40px auto'}}>
+        <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'0 auto 40px auto'}}>
           <h3>{lang==='FR'?'Envoyer un SMS':'Send SMS'}</h3>
           <div style={{display:'flex',gap:'15px',flexWrap:'wrap'}}>
             <input type="text" placeholder={lang==='FR'?'Prénom':'First name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>

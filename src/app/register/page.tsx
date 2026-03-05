@@ -24,13 +24,7 @@ export default function RegisterPage() {
 const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
 const isEnglish = pathname.startsWith("/en");
 
-  const logoSrc = isEnglish
-    ? "/images/logo_en.png"
-    : "/images/logo.png";
 
-  const altText = isEnglish
-    ? "Starloo Logo"
-    : "Logo Starloo";
 
     try {
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
@@ -83,7 +77,22 @@ console.log("Business insert result:", businessData, businessError);
     }
   };
 
- 
+   function Logo({ lang }: { lang: "FR" | "EN" }) {
+  return (
+    <div style={{ textAlign: "center" }}>
+      <img
+        src="/images/logo.png"
+        alt="Starsloo"
+        style={{ height: "100px" }}
+      />
+      <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
+        {lang === "FR"
+          ? "La puissances des étoiles"
+          : "The power of stars"}
+      </p>
+    </div>
+  );
+}
 	  
   return (
     <div
@@ -139,10 +148,8 @@ console.log("Business insert result:", businessData, businessError);
           }}
         >
 		
-		{/* LOGO */}
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '0px 0px 50px' }}>
-        <Image src="/images/logo.png" alt="Logo" width={284} height={120} />
-      </div>
+			    {/* LOGO */}
+      <Logo lang={lang} />
 	
 	  
           {lang === "FR" ? "Créer votre compte" : "Create your Account"}
@@ -299,6 +306,9 @@ console.log("Business insert result:", businessData, businessError);
 	  </div>
 	  </section>
 	   
+	    {/* LOGO */}
+      <Logo lang={lang} />
+	  
 	           <div className="hero-stars">
           <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
         </div>

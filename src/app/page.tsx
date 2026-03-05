@@ -144,8 +144,8 @@ useEffect(() => {
 
         <h1 className="hero-title">
           {lang === 'FR'
-            ? 'Boostez vos avis Google et votre visibilité !'
-            : 'Boost your Google reviews and visibility!'}
+            ? 'Transformez chaque client satisfait en avis 5 étoiles !'
+            : 'Turn every happy customer into a 5-star review !'}
         </h1>
 
         <p className="hero-subtitle">
@@ -190,6 +190,25 @@ useEffect(() => {
           {loading ? (lang === 'FR' ? 'Connexion...' : 'Logging in...') : (lang === 'FR' ? 'Se connecter' : 'Login')}
         </button>
       </div>
+	  
+	  {/* HERO SECTION */}
+      <section className="hero">
+        <div className="hero-stars">
+          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+        </div>
+
+        <h1 className="hero-title">
+          {lang === 'FR'
+            ? 'Boostez vos avis Google et votre visibilité !'
+            : 'Boost your Google reviews and visibility!'}
+        </h1>
+
+        <p className="hero-subtitle">
+          {lang === 'FR'
+            ? 'Envoyez un simple SMS après chaque visite et transformez vos clients satisfaits en avis 5 étoiles.'
+            : 'Send a simple SMS after each visit and turn happy customers into 5-star reviews.'}
+        </p>
+      </section>
 
       {/* MARKETING SECTIONS HERO STYLE */}
 	  
@@ -248,9 +267,14 @@ useEffect(() => {
         </button>
       </section>
 	   
+	   		 {/* LOGO */}
+      <Logo lang={lang} />
+	  
 	           <div className="hero-stars">
           <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
         </div>
+		
+	  
       {/* FOOTER */}
       <div className="home-footer">
         <p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>

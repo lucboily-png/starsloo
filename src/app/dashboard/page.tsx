@@ -272,7 +272,7 @@ const plans = [
     color: "#28A7C9",
     sms: 100,
     priceText: "$19.95",
-    priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
+    priceId: "price_1T7erWI2YBJOFjNSfQ9P8384",
     advantages: {
       FR: [
         "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
@@ -295,7 +295,7 @@ const plans = [
     color: "#28A7C9",
     sms: 250,
     priceText: "$29.95",
-    priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
+    priceId: "price_1T7esYI2YBJOFjNSzNKtBx3n",
 
     advantages: {
       FR: [
@@ -321,7 +321,7 @@ const plans = [
   color: "#28A7C9",
   sms: 600,
   priceText: "$49.95",
-  priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
+  priceId: "price_1T7etbI2YBJOFjNSXbvuAUkY",
 
   advantages: {
     FR: [

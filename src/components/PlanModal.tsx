@@ -32,7 +32,7 @@ const plans: Plan[] = [
     nameEN: "Starter 🎯",
     sms: "100 SMS",
     priceText: "$19.95",
-    priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
+    priceId: "price_1T7erWI2YBJOFjNSfQ9P8384",
     color: "#ffffff",
     advantages: {
       FR: [
@@ -58,7 +58,7 @@ const plans: Plan[] = [
     nameEN: "Growth 🔥",
     sms: "250 SMS",
     priceText: "$29.95",
-    priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
+    priceId: "price_1T7esYI2YBJOFjNSzNKtBx3n",
     color: "#ffffff",
     advantages: {
       FR: [
@@ -84,7 +84,7 @@ const plans: Plan[] = [
     nameEN: "Pro 🚀",
     sms: "600 SMS",
     priceText: "$49.95",
-    priceId: "price_1T5e9REyGK0Xf3bpasnTX12f",
+    priceId: "price_1T7etbI2YBJOFjNSXbvuAUkY",
     color: "#ffffff",
     advantages: {
       FR: [

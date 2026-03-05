@@ -24,13 +24,7 @@ export default function RegisterPage() {
 const pathname = typeof window !== "undefined" ? window.location.pathname : "/";
 const isEnglish = pathname.startsWith("/en");
 
-  const logoSrc = isEnglish
-    ? "/images/logo_en.png"
-    : "/images/logo.png";
 
-  const altText = isEnglish
-    ? "Starloo Logo"
-    : "Logo Starloo";
 
     try {
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({ email, password });
@@ -83,7 +77,22 @@ console.log("Business insert result:", businessData, businessError);
     }
   };
 
- 
+   function Logo({ lang }: { lang: "FR" | "EN" }) {
+  return (
+    <div style={{ textAlign: "center" }}>
+      <img
+        src="/images/logo.png"
+        alt="Starsloo"
+        style={{ height: "100px" }}
+      />
+      <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
+        {lang === "FR"
+          ? "La puissances des étoiles"
+          : "The power of stars"}
+      </p>
+    </div>
+  );
+}
 	  
   return (
     <div
@@ -259,7 +268,7 @@ console.log("Business insert result:", businessData, businessError);
     position: "absolute",  // pour le placer en haut à gauche ou droite
 	top: "-45px",
     left: "0px",
-    padding: "20px 40px 20px 40px",
+    padding: "30px 40px 20px 40px",
     borderRadius: "20px",
     border: "none",
     backgroundColor: "#1e3a8a",
@@ -299,6 +308,9 @@ console.log("Business insert result:", businessData, businessError);
 	  </div>
 	  </section>
 	   
+	    {/* LOGO */}
+      <Logo lang={lang} />
+	  
 	           <div className="hero-stars">
           <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
         </div>

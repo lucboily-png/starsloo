@@ -32,7 +32,7 @@ const plans: Plan[] = [
     nameEN: "Starter 🎯",
     sms: "100 SMS",
     priceText: "$19.95",
-    priceId: "price_1T5e6CEyGK0Xf3bphUQDpxig",
+    priceId: "price_1T7erWI2YBJOFjNSfQ9P8384",
     color: "#ffffff",
     advantages: {
       FR: [
@@ -58,7 +58,7 @@ const plans: Plan[] = [
     nameEN: "Growth 🔥",
     sms: "250 SMS",
     priceText: "$29.95",
-    priceId: "price_1T5e7KEyGK0Xf3bpV6yhZEvK",
+    priceId: "price_1T7esYI2YBJOFjNSzNKtBx3n",
     color: "#ffffff",
     advantages: {
       FR: [
@@ -176,10 +176,12 @@ export default function PlanModal({ open, businessId, onClose, lang }: PlanModal
         </h2>
 
         <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '30px'
-        }}>
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 280px))',
+  justifyContent: 'center',
+  gap: '30px',
+  width: '100%'
+}}>
           {plans.map((plan, index) => (
             <div
               key={plan.priceId}

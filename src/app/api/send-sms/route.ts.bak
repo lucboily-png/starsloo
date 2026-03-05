@@ -10,31 +10,14 @@ export async function POST(req: NextRequest) {
   try {
     const { to, message } = await req.json()
 
-    if (!to || !message) {
-      return NextResponse.json(
-        { error: "Missing 'to' or 'message' in request body" },
-        { status: 400 }
-      )
-    }
-
-    // Assurez-vous que le numéro est au format international
-    let formattedTo = to
-    if (!to.startsWith("+")) {
-      formattedTo = "+" + to.replace(/\D/g, "")
-    }
-
-    console.log("Sending SMS to:", formattedTo)
-    console.log("Message:", message)
-
     const sms = await client.messages.create({
       body: message,
       from: process.env.TWILIO_PHONE_NUMBER!,
-      to: formattedTo,
+      to: to,
     })
 
     return NextResponse.json({ success: true, sid: sms.sid })
   } catch (error: any) {
-    console.error("Twilio error:", error)
     return NextResponse.json(
       { error: error.message },
       { status: 500 }
