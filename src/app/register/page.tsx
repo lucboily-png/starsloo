@@ -281,8 +281,8 @@ console.log("Business insert result:", businessData, businessError);
 
    {/* MARKETING SECTIONS HERO STYLE */}
 	  
-	   <section className="marketing-hero-sections">
-	  <div className="marketing-card">
+	   <section className="marketing-hero-sectionsreg">
+	  <div className="marketing-cardreg">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           <h3>{lang === 'FR' ? ' 🎁 OBTENEZ 20 SMS' : '🎁 GET 20 FREE SMS'}</h3>
           <p>{lang === 'FR' ? 'Obtenez 20 SMS prêts à envoyer suite à la création de votre compte .' : 'Get 20 SMS messages ready-to-send after you create your account.'}</p>

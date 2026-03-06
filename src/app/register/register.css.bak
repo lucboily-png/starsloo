@@ -9,17 +9,17 @@ html, body, #__next {
 }
 
 /* MARKETING SECTIONS STYLE HERO */
-.marketing-hero-sections {
+.marketing-hero-sectionsreg {
   display: flex;
   flex-direction: column;
-  gap: 3rem;
+  gap: 2rem;
   width: 0, auto;
   max-width: 900px;
   margin: 3rem auto 0 auto;
   text-align: center;
 }
 
-.marketing-card {
+.marketing-cardreg {
   background: linear-gradient(135deg, #1e3a8a, #3b82f6);
   width: 450px;
   color: white;

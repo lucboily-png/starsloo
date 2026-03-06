@@ -9,7 +9,7 @@ html, body, #__next {
 }
 
 /* MARKETING SECTIONS STYLE HERO */
-.marketing-hero-sections {
+.marketing-hero-sectionsreg {
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -19,9 +19,9 @@ html, body, #__next {
   text-align: center;
 }
 
-.marketing-card {
+.marketing-cardreg {
   background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-  width: 450px;
+  width: auto;
   color: white;
   border-radius: 25px;
   padding: 3rem 2rem;
