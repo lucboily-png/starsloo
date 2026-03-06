@@ -346,7 +346,7 @@ const plans = [
 
  return (
  <div>
-   <div style={{maxWidth:'1200px', margin:'-10px', margin:'-10px auto 40px auto',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+   <div style={{maxWidth:'1200px', margin:'-10px auto 40px auto',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 
           <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
           <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
