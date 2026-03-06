@@ -12,7 +12,7 @@ html, body, #__next {
 .marketing-hero-sections {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 3rem;
   width: 0, auto;
   max-width: 900px;
   margin: 3rem auto 0 auto;
@@ -21,7 +21,7 @@ html, body, #__next {
 
 .marketing-card {
   background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-  width: 250px;
+  width: 450px;
   color: white;
   border-radius: 25px;
   padding: 3rem 2rem;

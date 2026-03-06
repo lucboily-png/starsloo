@@ -114,7 +114,7 @@ body { background: #f4f6fc; color: #111827; }
 
 /* Login Card */
 .login-card {
-  background: #e0e7ff;
+  background: #B9E0EB;
   padding: 2.5rem 2rem;
   border-radius: 20px;
   box-shadow: 0 15px 30px rgba(0,0,0,0.08);
@@ -164,9 +164,9 @@ body { background: #f4f6fc; color: #111827; }
   flex-direction: column;
   padding: 2.0rem 0rem;
   gap: 2rem;
-  width: 100%;
+  width: 90%;
   max-width: 1000px;
-  margin: 3rem auto 0 auto;
+  margin: 1rem auto 0 auto;
   text-align: center;
 }
 

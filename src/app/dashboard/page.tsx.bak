@@ -1,5 +1,5 @@
 /* src/app/dashboard/page.tsx */
-/* src/app/dashboard/page.tsx */
+
 
 'use client'
 
@@ -278,13 +278,13 @@ const plans = [
       FR: [
         "Facilitez la récolte d’avis Google et l’envoi de SMS marketing",
         "Envoyez jusqu’à 100 SMS par mois",
-        "Accès au tableau de bord",
+        "Tableau de bord complet",
         "Support par email"
       ],
       EN: [
         "Easily collect Google reviews and send marketing SMS",
         "Send up to 130 SMS per month",
-        "Dashboard access",
+        "Full dashboard access",
         "Email support"
       ]
     }
@@ -329,14 +329,14 @@ const plans = [
       "Conçu pour les entreprises établies et ambitieuses",
       "Maximisez votre visibilité et vos avis Google",
       "Envoyez jusqu’à 600 SMS par mois",
-      "Tableau de bord avancé avec statistiques détaillées",
+      "Tableau de bord complet",
       "Support prioritaire rapide"
     ],
     EN: [
       "Designed for established and ambitious businesses",
       "Maximize your visibility and Google reviews",
       "Send up to 600 SMS per month",
-      "Advanced dashboard with detailed analytics",
+      "Full dashboard access",
       "Fast priority support"
     ]
   }
@@ -346,7 +346,7 @@ const plans = [
 
  return (
  <div>
-   <div style={{maxWidth:'1200px', margin:'10px auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+   <div style={{maxWidth:'1200px', margin:'-10px', margin:'-10px auto 40px auto',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
 
           <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
           <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
@@ -400,10 +400,13 @@ const plans = [
 		  
       {/* GOOGLE LINK / SMS TEMPLATES */}
       <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'50px auto'}}>
-        <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien URL':'Enter your French message here + your URL link'}</h3>
-        <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name}, merci de votre passage à {business_name}. Laissez-nous un avis Google... + votre url (lien google ou autre)':' EX: Bonjour {client_name}, merci de votre passage chez {business.name}. Laisser-nous un avis Google...  + your url link here (google review link or other)'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
-        <h3>{lang==='FR'?'Inscrire votre message en anglais ici + votre lien URL':'Enter your English message here + your URL link'}</h3>
-		<input type="text" placeholder={lang==='FR'?'EX: Hi {client_name}, thank you for your visit at {business_name}. Let us a Google review... + votre url (lien google ou autre)':'EX: Hi [First Name], thanks for visiting us at {business.name}. Your Google review means a lot for us... + your url link here (google review link or other)'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
+        <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien Google ':'Enter your French message here + your Google link'}</h3>
+		 <h1 style={{ margin: '0px 500px 30px 0px', fontSize: '15px', fontWeight: 600}}>
+            {lang==='FR' ? `⚠️ {client_name} = Nom du client et {business_name} = nom de votre entreprise` : `⚠️ {client_name} = Client name and {business_name} = Your company name`}
+          </h1>
+        <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Votre lien google ici':' EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Your Google link here'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
+        <h3>{lang==='FR'?'Inscrire votre message en Anglais ici + votre lien Google':'Enter your English message here + your Google link'}</h3>
+		<input type="text" placeholder={lang==='FR'?'Ex: Hello {client_name} 👋 Thank you for visiting {business_name}! Your feedback helps us a lot. Youre Google review link here':'EX: Hi [First Name] 👋, thanks for visiting us at {business.name}. Your Google review means a lot for us. Your Google link here'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
         <button onClick={async ()=>{
           if(!business) return
           const { error } = await supabase.from('businesses').update({
@@ -429,8 +432,8 @@ const plans = [
             <input type="text" placeholder={lang==='FR'?'Téléphone':'Phone'} value={clientPhone} onChange={(e)=>setClientPhone(e.target.value)} className="dashboard-input"/>
           </div>
           <div style={{marginTop:'15px',display:'flex',gap:'15px'}}>
-            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">Envoyer en FR</button>
-            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">Envoyer en EN</button>
+            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">{lang==='FR'?'Envoyer en FR':'Send in FR'}</button>
+            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">{lang==='FR'?'Envoyer en EN':'Send in EN'}</button>
           </div>
         </div>
       )}
@@ -615,6 +618,12 @@ const plans = [
         answerEN: "Complete Step 1 above on this page. This section will be the message that will be sent to your client. For example: Hello {client_name}! Following your visit to {business_name}, we would like to have your feedback... + the link to your Google review URL or your website if you are sending an SMS marketing message. IMPORTANT: You will need to keep {client_name} and {business_name} to personalize your message. If you are only sending messages in French, you can fill in only the French Message section and click Save to save your message. Then, in Step 2, fill in First Name and Phone Number and click the Send button to send your message in the language of your choice."
       },
       {
+        questionFR: "Comment trouver mon lien pour les Avis Google ?",
+        answerFR: "1️⃣ Allez sur votre fiche Google Business. 2️⃣ Cliquez sur “Demander des avis”. 3️⃣ Copiez le lien généré par Google. 4️⃣ Collez ce lien dans votre message SMS dans Starsloo. Vos clients pourront alors laisser un avis en un seul clic ⭐ Astuce - Vous pouvez aussi trouver ce lien en recherchant votre entreprise sur Google. Dans votre fiche entreprise, cliquez sur “Demander des avis” puis copiez le lien.",
+        questionEN: "How do I find my link for Google Reviews?",
+        answerEN: "1️⃣ Go to your Google Business Profile. 2️⃣ Click on “Request reviews”. 3️⃣ Copy the link generated by Google. 4️⃣ Paste this link into your SMS message in Starsloo. Your customers will then be able to leave a review with a single click. ⭐ Tip - You can also find this link by searching for your business on Google. In your business profile, click on “Request reviews” and then copy the link." 
+      },
+	  {
         questionFR: "Les SMS sont-ils automatiques ?",
         answerFR: "Non. Vous gardez le contrôle total. Chaque message est envoyé manuellement par vous.",
         questionEN: "Are messages automated?",
@@ -634,9 +643,9 @@ const plans = [
       },
 	  {
         questionFR: "Parcequ'on est une équipe extraordinaire, voici quelques messages déjà fait pour vous",
-        answerFR: "Bonjour {client_name}! Merci pour votre visite chez {business_name}. Votre avis compte énormément pour nous 🙏 Vous pouvez nous laisser un commentaire ici : [LIEN_AVIS - Bonjour {client_name}, suite à votre passage chez {business_name}, nous aimerions connaître votre expérience. Cela ne prend qu’une minute : [LIEN_AVIS - Merci d’avoir choisi {business_name}, {client_name}! Si vous avez apprécié votre visite, un petit avis nous aiderait beaucoup 😊 [LIEN_AVIS] - Salut {client_name}! On espère que vous avez adoré votre expérience chez {business_name} 🤍 Un petit avis ici nous ferait vraiment plaisir : [LIEN_AVIS] - Bonjour {client_name}! Toute l’équipe de {business_name} vous remercie 🙌 Si vous avez 30 secondes, voici le lien pour nous laisser votre avis : [LIEN_AVIS] - Bonjour {client_name}, votre retour nous aide à offrir un service toujours meilleur chez {business_name}. Dites-nous ce que vous en pensez ici : [LIEN_AVIS] - Bonjour {client_name}! Merci d’avoir choisi {business_name}. Cliquez ici pour laisser votre avis : [LIEN_AVIS] ",
+        answerFR: "Bonjour {client_name}! Merci pour votre visite chez {business_name}. Votre avis compte énormément pour nous 🙏 Vous pouvez nous laisser un commentaire ici : [LIEN_AVIS_GOOGLE] - Bonjour {client_name}, suite à votre passage chez {business_name}, nous aimerions connaître votre expérience. Cela ne prend qu’une minute : [LIEN_AVIS_GOOGLE] - Merci d’avoir choisi {business_name}, {client_name}! Si vous avez apprécié votre visite, un petit avis nous aiderait beaucoup 😊 [LIEN_AVIS_GOOGLE] - Salut {client_name}! On espère que vous avez adoré votre expérience chez {business_name} 🤍 Un petit avis ici nous ferait vraiment plaisir : [LIEN_AVIS_GOOGLE]",
         questionEN: "Because we're an extraordinary team, here are some messages already written for you.",
-        answerEN: "Hello {client_name}! Thank you for visiting {business_name}. Your opinion means a lot to us 🙏 You can leave us a review here: [REVIEW_LINK] - Hello {client_name}, following your visit to {business_name}, we would like to know about your experience. It only takes a minute: [REVIEW_LINK] - Thank you for choosing {business_name}, {client_name}! If you enjoyed your visit, a short review would help us a lot 😊 [REVIEW_LINK] - Hi {client_name}! We hope you loved your experience at {business_name} 🤍 A short review here would really make us happy: [REVIEW_LINK] - Hello {client_name}! The entire {business_name} team thanks you 🙌 If you have 30 seconds, here's the link to leave us your review: [REVIEW_LINK] - Hello {client_name}, your feedback helps us provide even better service at {business_name}. Tell us what you think here: [REVIEW_LINK] - Hello {client_name}! Thank you for choosing {business_name}. Click here to leave your review: [REVIEW_LINK]"
+        answerEN: "Hello {client_name}! Thank you for visiting {business_name}. Your opinion means a lot to us 🙏 You can leave us a review here: [REVIEW_LINK] - Hello {client_name}, following your visit to {business_name}, we would like to know about your experience. It only takes a minute: [REVIEW_LINK] - Thank you for choosing {business_name}, {client_name}! If you enjoyed your visit, a short review would help us a lot 😊 [REVIEW_LINK] - Hi {client_name}! We hope you loved your experience at {business_name} 🤍 A short review here would really make us happy: [REVIEW_LINK] - Hello {client_name}! The entire {business_name} team thanks you 🙌 If you have 30 seconds, here's the link to leave us your review: [REVIEW_LINK]"
       }
     ].map((faq, index) => (
       <div key={index} style={{

@@ -166,6 +166,9 @@ useEffect(() => {
       <div className="login-card">
         <h2 className="login-title">{lang === 'FR' ? 'Connexion' : 'Login'}</h2>
 
+		<label style={{ fontWeight: "600", color: "#333" }}>
+            {lang === "FR" ? "Email" : "Email"}
+          </label>
         <input
           type="email"
           placeholder={lang === 'FR' ? 'Email' : 'Email'}
@@ -173,7 +176,9 @@ useEffect(() => {
           onChange={(e) => setEmail(e.target.value)}
           className="input"
         />
-
+		<label style={{ fontWeight: "600", color: "#333" }}>
+            {lang === "FR" ? "Mot de passe" : "Password"}
+          </label>
         <input
           type="password"
           placeholder={lang === 'FR' ? 'Mot de passe' : 'Password'}
@@ -216,7 +221,7 @@ useEffect(() => {
 	  <div className="marketing-card">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           <h3>{lang === 'FR' ? ' 🎁 OBTENEZ 20 SMS GRATUITEMENT' : '🎁 GET 20 FREE SMS'}</h3>
-          <p>{lang === 'FR' ? 'Nous vous remettons 20 SMS prêts à envoyer suite à la création de votre compte .' : 'We will provide you with 20 ready-to-send SMS messages after you create your account.'}</p>
+          <p>{lang === 'FR' ? 'Obtenez 20 SMS prêts à envoyer suite à la création de votre compte .' : 'Get 20 SMS messages ready-to-send after you create your account.'}</p>
 		</div>
       </section>
 	  
@@ -236,7 +241,7 @@ useEffect(() => {
         <div className="marketing-card">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           <h3>{lang === 'FR' ? 'Facile à utiliser' : 'Easy to Use'}</h3>
-          <p>{lang === 'FR' ? 'Notre plateforme est intuitive et rapide, sans tracas techniques.' : 'Our platform is intuitive and hassle-free.'}</p>
+          <p>{lang === 'FR' ? 'Notre plateforme est intuitive, rapide, sans tracas techniques.' : 'Our platform is intuitive and hassle-free.'}</p>
 		</div>
 		
       </section>
@@ -252,7 +257,7 @@ useEffect(() => {
         <h1 className="hero-title">
           {lang === 'FR'
             ? 'Exploser vos avis GOOGLE facilement!'
-            : 'Explode your Google reviews easyly!'}
+            : 'Explode your Google reviews easily!'}
         </h1>
 
         <p className="hero-subtitle">
