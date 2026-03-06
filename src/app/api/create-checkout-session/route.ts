@@ -17,6 +17,8 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+	
+	console.log(process.env.PRICE_ID_LIVE)
 
     // --- Création de la session Stripe Checkout
     const session = await stripe.checkout.sessions.create({
