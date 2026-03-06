@@ -21,10 +21,10 @@ html, body, #__next {
 
 .marketing-cardreg {
   background: linear-gradient(135deg, #1e3a8a, #3b82f6);
-  width: 450px;
+  width: auto;
   color: white;
   border-radius: 25px;
-  padding: 3rem 2rem;
+  padding: 3rem 3rem;
   box-shadow: 0 15px 35px rgba(0,0,0,0.1);
   transition: transform 0.3s, box-shadow 0.3s;
 }

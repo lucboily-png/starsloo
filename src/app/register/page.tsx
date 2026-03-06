@@ -83,9 +83,9 @@ console.log("Business insert result:", businessData, businessError);
       <img
         src="/images/logo.png"
         alt="Starsloo"
-        style={{ height: "100px" }}
+        style={{ height: "100px", margin:'30px auto 10px auto' }}
       />
-      <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
+      <p style={{ marginTop: "0px", margin:'-15px auto 40px auto', fontSize: "18px", color: "#555" }}>
         {lang === "FR"
           ? "La puissances des étoiles"
           : "The power of stars"}
@@ -145,7 +145,7 @@ console.log("Business insert result:", businessData, businessError);
         <h1
           style={{
             textAlign: "center",
-            marginBottom: "25px",
+            marginBottom: "30px",
             color: "#1e3a8a",
             fontSize: "30px",
             fontWeight: "bold",

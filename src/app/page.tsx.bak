@@ -166,7 +166,7 @@ useEffect(() => {
       <div className="login-card">
         <h2 className="login-title">{lang === 'FR' ? 'Connexion' : 'Login'}</h2>
 
-<label style={{ fontWeight: "600", color: "#333" }}>
+		<label style={{ fontWeight: "600", color: "#333" }}>
             {lang === "FR" ? "Email" : "Email"}
           </label>
         <input
@@ -176,7 +176,7 @@ useEffect(() => {
           onChange={(e) => setEmail(e.target.value)}
           className="input"
         />
-<label style={{ fontWeight: "600", color: "#333" }}>
+		<label style={{ fontWeight: "600", color: "#333" }}>
             {lang === "FR" ? "Mot de passe" : "Password"}
           </label>
         <input
