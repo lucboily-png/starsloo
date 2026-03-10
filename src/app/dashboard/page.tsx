@@ -402,11 +402,11 @@ const plans = [
       <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'50px auto'}}>
         <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien Google ':'Enter your French message here + your Google link'}</h3>
 		 <h1 style={{ margin: '0px 500px 30px 0px', fontSize: '15px', fontWeight: 600}}>
-            {lang==='FR' ? `⚠️ {client_name} = Nom du client et {business_name} = nom de votre entreprise` : `⚠️ {client_name} = Client name and {business_name} = Your company name`}
+            {lang==='FR' ? `⚠️ {client_name} = Prénom du client et {business_name} = nom de votre entreprise` : `⚠️ {client_name} = Customer first name and {business_name} = Your company name`}
           </h1>
         <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Votre lien google ici':' EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Your Google link here'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
         <h3>{lang==='FR'?'Inscrire votre message en Anglais ici + votre lien Google':'Enter your English message here + your Google link'}</h3>
-		<input type="text" placeholder={lang==='FR'?'Ex: Hello {client_name} 👋 Thank you for visiting {business_name}! Your feedback helps us a lot. Youre Google review link here':'EX: Hi [First Name] 👋, thanks for visiting us at {business.name}. Your Google review means a lot for us. Your Google link here'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
+		<input type="text" placeholder={lang==='FR'?'Ex: Hello {client_name} 👋 Thank you for visiting {business_name}! Your feedback helps us a lot. Youre Google review link here':'EX: Hi [client_name] 👋, thanks for visiting us at {business.name}. Your Google review means a lot for us. Your Google link here'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
         <button onClick={async ()=>{
           if(!business) return
           const { error } = await supabase.from('businesses').update({
@@ -428,7 +428,7 @@ const plans = [
         <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'0 auto 40px auto'}}>
           <h3>{lang==='FR'?'Envoyer un SMS':'Send SMS'}</h3>
           <div style={{display:'flex',gap:'15px',flexWrap:'wrap'}}>
-            <input type="text" placeholder={lang==='FR'?'Prénom':'First name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>
+            <input type="text" placeholder={lang==='FR'?'Prénom du client':'Customer first name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>
             <input type="text" placeholder={lang==='FR'?'Téléphone':'Phone'} value={clientPhone} onChange={(e)=>setClientPhone(e.target.value)} className="dashboard-input"/>
           </div>
           <div style={{marginTop:'15px',display:'flex',gap:'15px'}}>

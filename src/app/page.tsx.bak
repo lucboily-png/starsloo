@@ -150,8 +150,8 @@ useEffect(() => {
 
         <p className="hero-subtitle">
           {lang === 'FR'
-            ? 'Obtenez plus de retours positifs, améliorez votre réputation et attirez de nouveaux clients facilement.'
-            : 'Get more positive feedback, improve your reputation, and attract new clients easily.'}
+            ? 'Notre plateforme vous permet d’envoyer facilement un simple SMS après chaque visite et de transformez vos clients satisfaits en avis 5 étoiles.'
+            : 'Send a simple SMS after each visit and turn happy customers into 5-star reviews.'}
         </p>
 
         <button
@@ -210,8 +210,8 @@ useEffect(() => {
 
         <p className="hero-subtitle">
           {lang === 'FR'
-            ? 'Envoyez un simple SMS après chaque visite et transformez vos clients satisfaits en avis 5 étoiles.'
-            : 'Send a simple SMS after each visit and turn happy customers into 5-star reviews.'}
+		  ? 'Obtenez plus de retours positifs, améliorez votre réputation et attirez de nouveaux clients facilement.'
+            : 'Get more positive feedback, improve your reputation, and attract new clients easily.'}
         </p>
       </section>
 
@@ -221,7 +221,6 @@ useEffect(() => {
 	  <div className="marketing-card2">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           <h2>{lang === 'FR' ? ' 🎁 OBTENEZ 20 SMS' : '🎁 GET 20 FREE SMS'}</h2>
-		  <span></span>
           <p>{lang === 'FR' ? 'Obtenez 20 SMS GRATUITEMENT prêts à envoyer suite à la création de votre compte .' : 'Get 20 SMS messages ready-to-send after you create your account.'}</p>
 		</div>
       </section>
@@ -248,7 +247,6 @@ useEffect(() => {
       </section>
 	  
 	
-	
       {/* HERO SECTION */}
       <section className="hero">
         <div className="hero-stars">
@@ -272,6 +270,8 @@ useEffect(() => {
           {lang === 'FR' ? 'Créer un compte maintenant' : 'Create an account now'}
         </button>
       </section>
+	  
+	  
 	   
 	   		 {/* LOGO */}
       <Logo lang={lang} />

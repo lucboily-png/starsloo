@@ -150,8 +150,8 @@ useEffect(() => {
 
         <p className="hero-subtitle">
           {lang === 'FR'
-            ? 'Obtenez plus de retours positifs, améliorez votre réputation et attirez de nouveaux clients facilement.'
-            : 'Get more positive feedback, improve your reputation, and attract new clients easily.'}
+            ? 'Notre plateforme vous permet d’envoyer facilement un SMS après chaque visite et de transformez vos clients satisfaits en avis 5 étoiles.'
+            : 'Send a simple SMS after each visit and turn happy customers into 5-star reviews.'}
         </p>
 
         <button
@@ -210,8 +210,8 @@ useEffect(() => {
 
         <p className="hero-subtitle">
           {lang === 'FR'
-            ? 'Envoyez un simple SMS après chaque visite et transformez vos clients satisfaits en avis 5 étoiles.'
-            : 'Send a simple SMS after each visit and turn happy customers into 5-star reviews.'}
+		  ? 'Obtenez plus de retours positifs, améliorez votre réputation et attirez de nouveaux clients facilement.'
+            : 'Get more positive feedback, improve your reputation, and attract new clients easily.'}
         </p>
       </section>
 
@@ -247,7 +247,6 @@ useEffect(() => {
       </section>
 	  
 	
-	
       {/* HERO SECTION */}
       <section className="hero">
         <div className="hero-stars">
@@ -271,6 +270,8 @@ useEffect(() => {
           {lang === 'FR' ? 'Créer un compte maintenant' : 'Create an account now'}
         </button>
       </section>
+	  
+	  
 	   
 	   		 {/* LOGO */}
       <Logo lang={lang} />
