@@ -432,8 +432,8 @@ const plans = [
             <input type="text" placeholder={lang==='FR'?'Téléphone':'Phone'} value={clientPhone} onChange={(e)=>setClientPhone(e.target.value)} className="dashboard-input"/>
           </div>
           <div style={{marginTop:'15px',display:'flex',gap:'15px'}}>
-            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">{lang==='FR'?'Envoyer en FR':'Send in FR'}</button>
-            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">{lang==='FR'?'Envoyer en EN':'Send in EN'}</button>
+            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">{lang==='FR'?'Envoyer FR':'Send FR'}</button>
+            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">{lang==='FR'?'Envoyer EN':'Send EN'}</button>
           </div>
         </div>
       )}

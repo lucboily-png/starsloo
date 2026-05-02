@@ -150,7 +150,7 @@ useEffect(() => {
 
         <p className="hero-subtitle">
           {lang === 'FR'
-            ? 'Notre plateforme vous permet d’envoyer facilement un SMS après chaque visite et de transformez vos clients satisfaits en avis 5 étoiles.'
+            ? 'Notre plateforme vous permet d’envoyer un SMS à vos clients satisfait et obtenir des avis 5 étoiles.'
             : 'Send a simple SMS after each visit and turn happy customers into 5-star reviews.'}
         </p>
 
@@ -204,8 +204,8 @@ useEffect(() => {
 
         <h1 className="hero-title">
           {lang === 'FR'
-            ? 'Boostez vos avis Google et votre visibilité !'
-            : 'Boost your Google reviews and visibility!'}
+            ? 'Boostez vos avis Google !'
+            : 'Boost your Google reviews !'}
         </h1>
 
         <p className="hero-subtitle">
@@ -221,7 +221,7 @@ useEffect(() => {
 	  <div className="marketing-card2">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           <h2>{lang === 'FR' ? ' 🎁 OBTENEZ 20 SMS' : '🎁 GET 20 FREE SMS'}</h2>
-          <p>{lang === 'FR' ? 'Obtenez 20 SMS GRATUITEMENT prêts à envoyer suite à la création de votre compte .' : 'Get 20 SMS messages ready-to-send after you create your account.'}</p>
+          <p>{lang === 'FR' ? 'Essayez avec 20 SMS suite à la création de votre compte .' : 'Try with 20 SMS after you create your account.'}</p>
 		</div>
       </section>
 	  
@@ -229,7 +229,7 @@ useEffect(() => {
         <div className="marketing-card">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           <h3>{lang === 'FR' ? 'Attirez plus de clients' : 'Attract More Customers'}</h3>
-          <p>{lang === 'FR' ? 'Utilisez les avis pour améliorer votre visibilité et booster vos ventes.' : 'Leverage reviews to boost visibility and sales.'}</p>
+          <p>{lang === 'FR' ? 'Utilisez les avis Google pour améliorer votre visibilité et booster vos ventes.' : 'Leverage reviews to boost visibility and sales.'}</p>
         </div>
 
         <div className="marketing-card">
@@ -241,7 +241,7 @@ useEffect(() => {
         <div className="marketing-card">
 		<span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
           <h3>{lang === 'FR' ? 'Facile à utiliser' : 'Easy to Use'}</h3>
-          <p>{lang === 'FR' ? 'Notre plateforme est intuitive, rapide, sans tracas techniques.' : 'Our platform is intuitive and hassle-free.'}</p>
+          <p>{lang === 'FR' ? 'Notre plateforme est intuitive, rapide et facile à utiliser.' : 'Our platform is intuitive and hassle-free.'}</p>
 		</div>
 		
       </section>

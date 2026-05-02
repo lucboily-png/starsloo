@@ -402,7 +402,7 @@ const plans = [
       <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'50px auto'}}>
         <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien Google ':'Enter your French message here + your Google link'}</h3>
 		 <h1 style={{ margin: '0px 500px 30px 0px', fontSize: '15px', fontWeight: 600}}>
-            {lang==='FR' ? `⚠️ {client_name} = Prénom du client et {business_name} = nom de votre entreprise` : `⚠️ {client_name} = Client first name and {business_name} = Your company name`}
+            {lang==='FR' ? `⚠️ {client_name} = Prénom du client et {business_name} = nom de votre entreprise` : `⚠️ {client_name} = Customer first name and {business_name} = Your company name`}
           </h1>
         <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Votre lien google ici':' EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Your Google link here'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
         <h3>{lang==='FR'?'Inscrire votre message en Anglais ici + votre lien Google':'Enter your English message here + your Google link'}</h3>

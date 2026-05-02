@@ -192,7 +192,7 @@ body { background: #f4f6fc; color: #111827; }
 }
 
 .marketing-card2 {
-  background: #8114e0;
+  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
   font-size: 20px;
   color: white;
   border-radius: 25px;
