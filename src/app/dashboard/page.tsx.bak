@@ -7,8 +7,6 @@ import './dashboard.css'
 import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import PlanModal from '@/components/PlanModal'
-import Image from 'next/image'
-import { usePathname } from "next/navigation";
 
 type Subscription = {
   plan_name: string
@@ -37,8 +35,6 @@ export default function DashboardPage() {
   const [smsTemplateFR, setSmsTemplateFR] = useState('')
   const [smsTemplateEN, setSmsTemplateEN] = useState('')
   
-  const pathname = usePathname();
-  
   const [openFaq, setOpenFaq] = useState<number | null>(null)
 
 const toggleFaq = (index: number) => {
@@ -46,9 +42,6 @@ const toggleFaq = (index: number) => {
 }
 
 
-
-  // Si l'URL contient /en → logo anglais
-  const isEnglish = pathname.startsWith("/en");
 
   function Logo({ lang }: { lang: "FR" | "EN" }) {
   return (
@@ -58,7 +51,7 @@ const toggleFaq = (index: number) => {
         alt="Starsloo"
         style={{ height: "100px" }}
       />
-      <p style={{ marginTop: "8px", margin:'-10px auto 40px auto', fontSize: "18px", color: "#555" }}>
+      <p style={{ marginTop: "8px", margin:'60px auto 40px auto', fontSize: "18px", color: "#555" }}>
         {lang === "FR"
           ? "La puissance des étoiles"
           : "The power of stars"}
@@ -257,14 +250,6 @@ async function handlePlanClick(plan: Plan) {
     }
   }
 
-  const premiumCard = {
-    background:'#fff',
-    padding:'40px',
-    borderRadius:'18px',
-    boxShadow:'0 10px 30px rgba(0,0,0,0.05)',
-    transition:'0.2s'
-  }
-
   // 🔹 Plans avec avantages
 const plans = [
   {
@@ -344,385 +329,186 @@ const plans = [
 ]
 
 
- return (
- <div>
-   <div style={{maxWidth:'1200px', margin:'-10px auto 40px auto',display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+  return (
+    <main className="dashboard-page">
+      <div className="dashboard-shell">
+        <header className="dashboard-topbar">
+          <div className="dashboard-brand-mini">
+            <img src="/images/logo.png" alt="Starsloo" />
+            <span></span>
+          </div>
+          <div className="dashboard-topbar-actions">
+            <button onClick={() => setLang(lang === 'FR' ? 'EN' : 'FR')} className="dashboard-button dashboard-button-light">
+              {lang === 'FR' ? 'EN' : 'FR'}
+            </button>
+            <button onClick={async () => { await supabase.auth.signOut(); window.location.href = '/' }} className="dashboard-button dashboard-button-dark">
+              {lang === 'FR' ? 'Déconnexion' : 'Logout'}
+            </button>
+          </div>
+        </header>
 
-          <button onClick={()=>setLang(lang==='FR'?'EN':'FR')} className="dashboard-button">{lang==='FR' ? 'EN' : 'FR'}</button>
-          <button onClick={async ()=>{await supabase.auth.signOut(); window.location.href='/'}} className="dashboard-button">{lang==='FR' ? 'Déconnexion' : 'Logout'}</button>
-        </div>
-	  
-      {/* LOGO */}
-      <Logo lang={lang} />
+        <section className="dashboard-welcome">
+          <div>
+            <span className="dashboard-eyebrow">{lang === 'FR' ? 'TABLEAU DE BORD' : 'DASHBOARD'}</span>
+            <h1>{lang === 'FR' ? `Bonjour ${business.name} 👋` : `Hi ${business.name} 👋`}</h1>
+            <p>{lang === 'FR' ? "Gérez vos messages, vos avis Google et votre abonnement au même endroit." : "Manage your messages, Google reviews and subscription from one place."}</p>
+          </div>
+          <div className={`dashboard-status-pill ${subscription?.status === 'active' ? 'is-active' : 'is-inactive'}`}>
+            <span className="dashboard-status-dot" />
+            {subscription?.status || '-'}
+          </div>
+        </section>
 
-      {/* HEADER */}
-      <div style={{maxWidth:'1200px', margin:'0 auto 40px auto', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700 }}>
-            {lang==='FR' ? `Bonjour ${business.name} 👋` : `Hi ${business.name} 👋`}
-          </h1>
-          <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
-            {lang==='FR' ? "Voici l'état de votre compte" : "Here is your account overview"}
-          </p>
-        </div>
-      </div>
-
-      {/* STATS CARDS */}
-      <div style={{maxWidth:'1200px', margin:'0 auto', display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))', gap:'20px'}}>
-        <div className="dashboard-card">
-          <p className="dashboard-label">{lang==='FR'?'SMS Restants':'SMS Remaining'}</p>
-          <h2 className="dashboard-big-number">{smsRemaining}</h2>
-          <p style={{fontSize:'15px',color:'#777'}}>{subscription?.sms_max} total</p>
-          {subscription && (
-            <div className="dashboard-progress">
-              <div className="dashboard-progress-filled" style={{width:`${(subscription.sms_sent/subscription.sms_max)*100}%`}}/>
+        <section className="dashboard-stats-grid">
+          <article className="dashboard-stat-card dashboard-stat-primary">
+            <div className="dashboard-stat-icon">✉</div>
+            <div>
+              <p>{lang === 'FR' ? 'SMS restants' : 'SMS remaining'}</p>
+              <h2>{smsRemaining}</h2>
+              <span>{subscription?.sms_max || 0} {lang === 'FR' ? 'SMS inclus' : 'SMS included'}</span>
             </div>
-          )}
-        </div>
-        <div className="dashboard-card">
-          <p className="dashboard-label">{lang==='FR'?'SMS Envoyés':'SMS Sent'}</p>
-          <h2 className="dashboard-big-number">{subscription?.sms_sent || 0}</h2>
-        </div>
-        <div className="dashboard-card">
-          <p className="dashboard-label">{lang==='FR'?'Plan Actif':'Active Plan'}</p>
-          <h2 className="dashboard-big-number">{subscription?.plan_name || '-'}</h2>
-        </div>
-        <div className="dashboard-card">
-          <p className="dashboard-label">{lang==='FR'?'Statut':'Status'}</p>
-          <h2 className="dashboard-big-number" style={{color: subscription?.status==='active'? '#16a34a':'#dc2626'}}>{subscription?.status || '-'}</h2>
-        </div>
-      </div>
-<div style={{maxWidth:'1200px', margin:'20px 20px -50px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
-            {lang==='FR' ? `Étape 1` : `Step 1`}
-          </h1>
-		  </div>
-		  
-      {/* GOOGLE LINK / SMS TEMPLATES */}
-      <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'50px auto'}}>
-        <h3>{lang==='FR'?'Inscrire votre  message en Français ici + votre lien Google ':'Enter your French message here + your Google link'}</h3>
-		 <h1 style={{ margin: '0px 500px 30px 0px', fontSize: '15px', fontWeight: 600}}>
-            {lang==='FR' ? `⚠️ {client_name} = Prénom du client et {business_name} = nom de votre entreprise` : `⚠️ {client_name} = Customer first name and {business_name} = Your company name`}
-          </h1>
-        <input type="text" placeholder={lang==='FR'?'EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Votre lien google ici':' EX: Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Your Google link here'} value={smsTemplateFR} onChange={(e)=>setSmsTemplateFR(e.target.value)} className="dashboard-input"/>
-        <h3>{lang==='FR'?'Inscrire votre message en Anglais ici + votre lien Google':'Enter your English message here + your Google link'}</h3>
-		<input type="text" placeholder={lang==='FR'?'Ex: Hello {client_name} 👋 Thank you for visiting {business_name}! Your feedback helps us a lot. Youre Google review link here':'EX: Hi [client_name] 👋, thanks for visiting us at {business.name}. Your Google review means a lot for us. Your Google link here'} value={smsTemplateEN} onChange={(e)=>setSmsTemplateEN(e.target.value)} className="dashboard-input"/>
-        <button onClick={async ()=>{
-          if(!business) return
-          const { error } = await supabase.from('businesses').update({
-            link, sms_template_fr: smsTemplateFR, sms_template_en: smsTemplateEN
-          }).eq('id', business.id)
-          if(error) alert(error.message)
-          else alert(lang==='FR'?'Modifications sauvegardées !':'Saved!')
-        }} className="dashboard-button">{lang==='FR'?'Sauvegarder':'Save'}</button>
-      </div>	  
+            {subscription && (
+              <div className="dashboard-progress">
+                <div className="dashboard-progress-filled" style={{ width: `${Math.min((subscription.sms_sent / subscription.sms_max) * 100, 100)}%` }} />
+              </div>
+            )}
+          </article>
 
-		<div style={{maxWidth:'1200px', margin:'40px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
-            {lang==='FR' ? `Étape 2` : `Step 2`}
-          </h1>
-		  </div>
+          <article className="dashboard-stat-card">
+            <div className="dashboard-stat-icon">↗</div>
+            <div><p>{lang === 'FR' ? 'SMS envoyés' : 'SMS sent'}</p><h2>{subscription?.sms_sent || 0}</h2><span>{lang === 'FR' ? 'Ce mois-ci' : 'This month'}</span></div>
+          </article>
 
-      {/* SEND SMS */}
-      {subscription && (
-        <div className="dashboard-card2" style={{maxWidth:'1150px', margin:'0 auto 40px auto'}}>
-          <h3>{lang==='FR'?'Envoyer un SMS':'Send SMS'}</h3>
-          <div style={{display:'flex',gap:'15px',flexWrap:'wrap'}}>
-            <input type="text" placeholder={lang==='FR'?'Prénom du client':'Customer first name'} value={clientName} onChange={(e)=>setClientName(e.target.value)} className="dashboard-input"/>
-            <input type="text" placeholder={lang==='FR'?'Téléphone':'Phone'} value={clientPhone} onChange={(e)=>setClientPhone(e.target.value)} className="dashboard-input"/>
+          <article className="dashboard-stat-card">
+            <div className="dashboard-stat-icon">★</div>
+            <div><p>{lang === 'FR' ? 'Plan actif' : 'Active plan'}</p><h2 className="dashboard-plan-name">{subscription?.plan_name || '-'}</h2><span>{lang === 'FR' ? 'Abonnement actuel' : 'Current subscription'}</span></div>
+          </article>
+
+          <article className="dashboard-stat-card">
+            <div className="dashboard-stat-icon">✓</div>
+            <div><p>{lang === 'FR' ? 'Statut' : 'Status'}</p><h2 className={subscription?.status === 'active' ? 'text-success' : 'text-danger'}>{subscription?.status || '-'}</h2><span>{lang === 'FR' ? 'État du compte' : 'Account status'}</span></div>
+          </article>
+        </section>
+
+        <section className="dashboard-workspace">
+          <div className="dashboard-main-column">
+            <div className="dashboard-section-heading">
+              <span>01</span>
+              <div><h2>{lang === 'FR' ? 'Préparez vos messages' : 'Prepare your messages'}</h2><p>{lang === 'FR' ? 'Personnalisez vos modèles avant de les envoyer à vos clients.' : 'Customize your templates before sending them to customers.'}</p></div>
+            </div>
+
+            <article className="dashboard-panel">
+              <div className="dashboard-panel-header"><div><span className="dashboard-panel-kicker">FR</span><h3>{lang === 'FR' ? 'Message français' : 'French message'}</h3></div></div>
+              <div className="dashboard-tip">⚠️ {lang === 'FR' ? 'Conservez {client_name} et {business_name} pour personnaliser automatiquement le message.' : 'Keep {client_name} and {business_name} to personalize the message automatically.'}</div>
+              <textarea rows={5} placeholder="Bonjour {client_name} 👋 merci pour votre visite chez {business_name} ! Votre avis nous aide beaucoup. Ajoutez votre lien Google ici." value={smsTemplateFR} onChange={(e) => setSmsTemplateFR(e.target.value)} className="dashboard-input dashboard-textarea" />
+
+              <div className="dashboard-language-divider" />
+
+              <div className="dashboard-panel-header"><div><span className="dashboard-panel-kicker">EN</span><h3>{lang === 'FR' ? 'Message anglais' : 'English message'}</h3></div></div>
+              <textarea rows={5} placeholder="Hello {client_name} 👋 Thank you for visiting {business_name}! Your feedback means a lot. Add your Google review link here." value={smsTemplateEN} onChange={(e) => setSmsTemplateEN(e.target.value)} className="dashboard-input dashboard-textarea" />
+
+              <div className="dashboard-panel-actions">
+                <button onClick={async () => {
+                  if (!business) return
+                  const { error } = await supabase.from('businesses').update({ link, sms_template_fr: smsTemplateFR, sms_template_en: smsTemplateEN }).eq('id', business.id)
+                  if (error) alert(error.message)
+                  else alert(lang === 'FR' ? 'Modifications sauvegardées !' : 'Saved!')
+                }} className="dashboard-button dashboard-button-primary">
+                  {lang === 'FR' ? 'Sauvegarder les messages' : 'Save messages'}
+                </button>
+              </div>
+            </article>
+
+            <div className="dashboard-section-heading">
+              <span>02</span>
+              <div><h2>{lang === 'FR' ? 'Envoyez votre SMS' : 'Send your SMS'}</h2><p>{lang === 'FR' ? 'Ajoutez les coordonnées du client et choisissez la langue.' : 'Add the customer details and choose the language.'}</p></div>
+            </div>
+
+            {subscription && (
+              <article className="dashboard-panel dashboard-send-panel">
+                <div className="dashboard-form-grid">
+                  <label><span>{lang === 'FR' ? 'Prénom du client' : 'Customer first name'}</span><input type="text" placeholder={lang === 'FR' ? 'Ex. Marie' : 'Ex. Mary'} value={clientName} onChange={(e) => setClientName(e.target.value)} className="dashboard-input" /></label>
+                  <label><span>{lang === 'FR' ? 'Numéro de téléphone' : 'Phone number'}</span><input type="tel" placeholder="+1 514 000-0000" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} className="dashboard-input" /></label>
+                </div>
+                <div className="dashboard-send-actions">
+                  <button onClick={() => sendClientSMS('FR')} className="dashboard-button dashboard-button-primary">🇫🇷 {lang === 'FR' ? 'Envoyer en français' : 'Send in French'}</button>
+                  <button onClick={() => sendClientSMS('EN')} className="dashboard-button dashboard-button-outline">🇬🇧 {lang === 'FR' ? 'Envoyer en anglais' : 'Send in English'}</button>
+                </div>
+              </article>
+            )}
           </div>
-          <div style={{marginTop:'15px',display:'flex',gap:'15px'}}>
-            <button onClick={()=>sendClientSMS('FR')} className="dashboard-button">{lang==='FR'?'Envoyer en FR':'Send in FR'}</button>
-            <button onClick={()=>sendClientSMS('EN')} className="dashboard-button">{lang==='FR'?'Envoyer en EN':'Send in EN'}</button>
+
+          <aside className="dashboard-sidebar">
+            <article className="dashboard-sidebar-card dashboard-help-card">
+              <span className="dashboard-sidebar-icon">💡</span>
+              <h3>{lang === 'FR' ? 'Conseil rapide' : 'Quick tip'}</h3>
+              <p>{lang === 'FR' ? 'Un message court, personnel et envoyé peu après la visite obtient généralement davantage de réponses.' : 'A short, personal message sent shortly after the visit generally gets more responses.'}</p>
+            </article>
+            <article className="dashboard-sidebar-card">
+              <h3>{lang === 'FR' ? 'Votre utilisation' : 'Your usage'}</h3>
+              <div className="dashboard-usage-row"><span>{lang === 'FR' ? 'Utilisés' : 'Used'}</span><strong>{subscription?.sms_sent || 0}</strong></div>
+              <div className="dashboard-usage-row"><span>{lang === 'FR' ? 'Disponibles' : 'Available'}</span><strong>{smsRemaining}</strong></div>
+              <div className="dashboard-usage-row"><span>{lang === 'FR' ? 'Total' : 'Total'}</span><strong>{subscription?.sms_max || 0}</strong></div>
+            </article>
+            <button onClick={() => setShowContactForm(true)} className="dashboard-button dashboard-button-outline dashboard-full-button">{lang === 'FR' ? 'Besoin d’aide ?' : 'Need help?'}</button>
+          </aside>
+        </section>
+
+        <section className="dashboard-plans-section">
+          <div className="dashboard-centered-heading"><span className="dashboard-eyebrow">{lang === 'FR' ? 'ABONNEMENTS' : 'SUBSCRIPTIONS'}</span><h2>{lang === 'FR' ? 'Choisissez le plan qui vous convient' : 'Choose the plan that fits you'}</h2><p>{lang === 'FR' ? 'Passez à un volume supérieur à mesure que votre entreprise grandit.' : 'Move to a higher volume as your business grows.'}</p></div>
+          <div className="dashboard-plans-grid">
+            {plans.map((plan, index) => (
+              <article key={plan.priceId} className={`dashboard-plan-card ${index === 1 ? 'is-featured' : ''}`}>
+                {index === 1 && <div className="dashboard-popular-badge">{lang === 'FR' ? 'LE PLUS POPULAIRE' : 'MOST POPULAR'}</div>}
+                <div><h3>{lang === 'FR' ? plan.nameFR : plan.nameEN}</h3><div className="dashboard-price"><strong>{plan.priceText}</strong><span>{lang === 'FR' ? '/ mois' : '/ month'}</span></div><div className="dashboard-sms-count">{plan.sms} SMS</div></div>
+                <ul>{(lang === 'FR' ? plan.advantages.FR : plan.advantages.EN).map((adv, i) => <li key={i}><span>✓</span>{adv}</li>)}</ul>
+                <button onClick={() => handlePlanClick(plan)} className={`dashboard-button ${index === 1 ? 'dashboard-button-primary' : 'dashboard-button-outline'}`}>{lang === 'FR' ? 'Choisir ce plan' : 'Select plan'}</button>
+              </article>
+            ))}
           </div>
-        </div>
-      )}
+        </section>
 
-		<div style={{maxWidth:'1200px', margin:'50px 20px 10px 10px', display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-		<h1 style={{ margin: 20, fontSize: '28px', fontWeight: 700}}>
-            {lang==='FR' ? `Choisissez votre plan` : `Chose your plan`}
-          </h1>
-		  </div>
-		  
-{/* Plans Section */}
-<div
-  style={{
-    maxWidth: '1200px',
-    margin: '0 auto 60px auto',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-    gap: '30px'
-  }}
->
-  {plans.map((plan, index) => (
-    <div
-      key={plan.priceId}
-      style={{
-        background: '#ffffff',
-        borderRadius: '18px',
-        padding: '35px 30px',
-        boxShadow: '0 15px 35px rgba(0,0,0,0.06)',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        border: index === 1 ? '2px solid #28A7C9' : '1px solid #eee',
-        transform: index === 1 ? 'scale(1.03)' : 'scale(1)',
-        transition: '0.25s'
-      }}
-    >
-      {/* PLAN NAME */}
-      <div>
-        <h3
-          style={{
-            fontSize: '22px',
-            fontWeight: 700,
-            marginBottom: '10px',
-            color: '#111'
-          }}
-        >
-          {lang === 'FR' ? plan.nameFR : plan.nameEN}
-        </h3>
+        <section className="dashboard-account-actions">
+          <button onClick={() => setShowContactForm(true)} className="dashboard-button dashboard-button-primary">{lang === 'FR' ? 'Nous contacter' : 'Contact us'}</button>
+          {subscription && <button onClick={handleCancelSubscription} className="dashboard-button dashboard-button-danger">{lang === 'FR' ? 'Annuler mon abonnement' : 'Cancel subscription'}</button>}
+        </section>
 
-        {/* PRICE */}
-        <div style={{ marginBottom: '20px' }}>
-          <span
-            style={{
-              fontSize: '32px',
-              fontWeight: 800,
-              color: '#28A7C9'
-            }}
-          >
-            {plan.priceText}
-          </span>
-          <span style={{ fontSize: '14px', color: '#777' }}>
-            {lang === 'FR' ? ' / mois' : ' / month'}
-          </span>
-          <div style={{ fontSize: '14px', color: '#555', marginTop: '5px' }}>
-            {plan.sms} SMS
+        <section className="dashboard-faq-section">
+          <div className="dashboard-centered-heading"><span className="dashboard-eyebrow">FAQ</span><h2>{lang === 'FR' ? 'Questions fréquentes' : 'Frequently asked questions'}</h2></div>
+          <div className="dashboard-faq-list">
+            {[
+              { questionFR: "Comment fonctionnent les SMS ?", answerFR: "Les SMS sont envoyés directement depuis votre tableau de bord. Vous rédigez le message, ajoutez le numéro du client et l’envoi se fait instantanément.", questionEN: "How does SMS sending work?", answerEN: "Messages are sent directly from your dashboard. Simply write your message, add the customer's number, and it is delivered instantly." },
+              { questionFR: "Comment obtenir mon premier Avis Google par SMS", answerFR: "Complétez l'Étape 1 avec le message qui sera envoyé à votre client. Conservez {client_name} et {business_name}, ajoutez votre lien Google, sauvegardez, puis remplissez le prénom et le téléphone à l'Étape 2.", questionEN: "How to get my first Google review via SMS", answerEN: "Complete Step 1 with the message that will be sent to your customer. Keep {client_name} and {business_name}, add your Google link, save, then enter the first name and phone number in Step 2." },
+              { questionFR: "Comment trouver mon lien pour les Avis Google ?", answerFR: "Allez sur votre fiche Google Business, cliquez sur « Demander des avis », copiez le lien généré puis collez-le dans votre message Starsloo.", questionEN: "How do I find my Google Reviews link?", answerEN: "Open your Google Business Profile, click “Request reviews,” copy the generated link and paste it into your Starsloo message." },
+              { questionFR: "Les SMS sont-ils automatiques ?", answerFR: "Non. Vous gardez le contrôle total. Chaque message est envoyé manuellement par vous.", questionEN: "Are messages automated?", answerEN: "No. You stay in full control. Every message is manually sent by you." },
+              { questionFR: "Puis-je changer de plan à tout moment ?", answerFR: "Oui. Vous pouvez modifier ou annuler votre abonnement directement depuis votre tableau de bord.", questionEN: "Can I change my plan anytime?", answerEN: "Yes. You can upgrade or cancel your subscription anytime from your dashboard." },
+              { questionFR: "Que se passe-t-il si je dépasse ma limite de SMS ?", answerFR: "Si votre limite mensuelle est atteinte, vous pourrez choisir un plan supérieur pour continuer vos envois.", questionEN: "What happens if I exceed my SMS limit?", answerEN: "If you reach your monthly limit, you can choose a higher plan to continue sending messages." }
+            ].map((faq, index) => (
+              <article key={index} className={`dashboard-faq-item ${openFaq === index ? 'is-open' : ''}`} onClick={() => toggleFaq(index)}>
+                <div className="dashboard-faq-question"><span>{lang === 'FR' ? faq.questionFR : faq.questionEN}</span><button type="button" aria-label="Toggle answer">+</button></div>
+                <div className="dashboard-faq-answer"><p>{lang === 'FR' ? faq.answerFR : faq.answerEN}</p></div>
+              </article>
+            ))}
           </div>
-        </div>
+        </section>
 
-        {/* ADVANTAGES */}
-        <ul
-          style={{
-            paddingLeft: '18px',
-            marginBottom: '25px',
-            color: '#444',
-            lineHeight: '1.6'
-          }}
-        >
-          {(lang === 'FR'
-            ? plan.advantages.FR
-            : plan.advantages.EN
-          ).map((adv, i) => (
-            <li key={i} style={{ marginBottom: '6px' }}>
-              {adv}
-            </li>
-          ))}
-        </ul>
+        <footer className="dashboard-footer"><Logo lang={lang} /><p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p></footer>
       </div>
 
-      {/* BUTTON */}
-      <button
-        onClick={() => handlePlanClick(plan)}
-        style={{
-          marginTop: 'auto',
-          padding: '15px',
-          borderRadius: '10px',
-          border: 'none',
-          background: '#28A7C9',
-          color: '#fff',
-          fontWeight: 700,
-          fontSize: '15px',
-          cursor: 'pointer',
-          width: '100%'
-        }}
-      >
-        {lang === 'FR' ? 'Choisir ce plan' : 'Select plan'}
-      </button>
-    </div>
-  ))}
-</div>
-
-      {/* FOOTER ACTIONS */}
-      <div style={{maxWidth:'1200px', margin:'40px auto', display:'flex', gap:'20px', justifyContent:'center'}}>
-        {subscription && (
-          <button onClick={handleCancelSubscription} className="dashboard-button2 dashboard-button-cancel">
-            {lang==='FR'?'Annuler mon abonnement':'Cancel Subscription'}
-          </button>
-        )}
-        <button onClick={()=>setShowContactForm(true)} className="dashboard-button">
-          {lang==='FR'?'Nous contacter':'Contact Us'}
-        </button>
-      </div>
-
-      {/* POPUP CONTACT */}
       {showContactForm && (
-        <div className="dashboard-popup" onClick={()=>setShowContactForm(false)}>
-          <div className="dashboard-popup-content" onClick={e=>e.stopPropagation()}>
-            <div style={{display:'flex',justifyContent:'space-between', alignItems:'center'}}>
-              <h3 style={{margin:0, fontSize:'18px', fontWeight:600}}>{lang==='FR'?'Nous contacter':'Contact Us'}</h3>
-              <button onClick={()=>setShowContactForm(false)} style={{background:'none', border:'none', fontSize:'18px', cursor:'pointer', color:'#999'}}>×</button>
-            </div>
-            <input type="text" placeholder={lang==='FR'?'Votre nom':'Your name'} value={contactName} onChange={e=>setContactName(e.target.value)} className="dashboard-input"/>
-            <input type="text" placeholder={lang==='FR'?'Nom entreprise':'Business name'} value={contactBusiness} onChange={e=>setContactBusiness(e.target.value)} className="dashboard-input"/>
-            <input type="email" placeholder="Email" value={contactEmail} onChange={e=>setContactEmail(e.target.value)} className="dashboard-input"/>
-            <textarea placeholder="Message" rows={4} value={contactMessage} onChange={e=>setContactMessage(e.target.value)} className="dashboard-input"/>
-            <button onClick={handleContactSubmit} className="dashboard-button">{lang==='FR'?'Envoyer':'Send'}</button>
-          </div>
+        <div className="dashboard-popup" onClick={() => setShowContactForm(false)}>
+          <form className="dashboard-popup-content" onClick={(e) => e.stopPropagation()} onSubmit={handleContactSubmit}>
+            <div className="dashboard-modal-header"><div><span className="dashboard-eyebrow">STARSLOO</span><h3>{lang === 'FR' ? 'Nous contacter' : 'Contact us'}</h3></div><button type="button" onClick={() => setShowContactForm(false)}>×</button></div>
+            <input type="text" placeholder={lang === 'FR' ? 'Votre nom' : 'Your name'} value={contactName} onChange={(e) => setContactName(e.target.value)} className="dashboard-input" />
+            <input type="text" placeholder={lang === 'FR' ? 'Nom de l’entreprise' : 'Business name'} value={contactBusiness} onChange={(e) => setContactBusiness(e.target.value)} className="dashboard-input" />
+            <input type="email" placeholder="Email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} className="dashboard-input" />
+            <textarea placeholder="Message" rows={5} value={contactMessage} onChange={(e) => setContactMessage(e.target.value)} className="dashboard-input dashboard-textarea" />
+            <button type="submit" className="dashboard-button dashboard-button-primary dashboard-full-button">{lang === 'FR' ? 'Envoyer le message' : 'Send message'}</button>
+          </form>
         </div>
       )}
 
-
-<section className="marketing-hero-sections">
-<div style={{ display: 'flex', justifyContent: 'center', padding: '5px 4px 5px 5px' }}>
-
-	  </div>
-	  </section>
-	   
-	           <div className="hero-stars">
-          <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
-        </div>
-		
-{/* PREMIUM FAQ SECTION */}
-<section style={{
-  maxWidth: '900px',
-  margin: '80px auto',
-  padding: '0 20px'
-}}>
-  <h2 style={{
-    textAlign: 'center',
-    fontSize: '30px',
-    fontWeight: 700,
-    marginBottom: '50px',
-    background: 'linear-gradient(90deg,#111,#444)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
-  }}>
-    {lang === 'FR' ? 'Questions fréquentes' : 'Frequently Asked Questions'}
-  </h2>
-
-  <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-
-    {[
-      {
-        questionFR: "Comment fonctionnent les SMS ?",
-        answerFR: "Les SMS sont envoyés directement depuis votre tableau de bord. Vous rédigez le message, ajoutez le numéro du client et l’envoi se fait instantanément.",
-        questionEN: "How does SMS sending work?",
-        answerEN: "Messages are sent directly from your dashboard. Simply write your message, add the customer's number, and it is delivered instantly."
-      },
-	  {
-        questionFR: "Comment obtenir mon premier Avis Google par SMS",
-        answerFR: "Compléter l'Étape 1 un peu plus haut sur cette page, ce sera ce message qui sera envoyé à votre client. Par exemple: Bonjour {client_name}! Suite à votre visite chez {business_name} nous aimerions avoir votre avis... + le lien de votre URL Avis Google ou de votre site web si vous envoyer un SMS Marketing. ATTENTION: Il faudra concerver ceci: {client_name} et {business_name} afin de personaliser votre message. Si vous envoyer que des messages en français, vous pouvez remplir que la partie Message en français et faire Sauvegarder afin d'enregistrer votre message. Ensuite à l'Étape 2, vous remplissez Prénom et # de tél et cliquer sur le bouton envoyer pour envoyer votre message dans la langue de votre choix.",
-        questionEN: "How to get my first Google review via SMS",
-        answerEN: "Complete Step 1 above on this page. This section will be the message that will be sent to your client. For example: Hello {client_name}! Following your visit to {business_name}, we would like to have your feedback... + the link to your Google review URL or your website if you are sending an SMS marketing message. IMPORTANT: You will need to keep {client_name} and {business_name} to personalize your message. If you are only sending messages in French, you can fill in only the French Message section and click Save to save your message. Then, in Step 2, fill in First Name and Phone Number and click the Send button to send your message in the language of your choice."
-      },
-      {
-        questionFR: "Comment trouver mon lien pour les Avis Google ?",
-        answerFR: "1️⃣ Allez sur votre fiche Google Business. 2️⃣ Cliquez sur “Demander des avis”. 3️⃣ Copiez le lien généré par Google. 4️⃣ Collez ce lien dans votre message SMS dans Starsloo. Vos clients pourront alors laisser un avis en un seul clic ⭐ Astuce - Vous pouvez aussi trouver ce lien en recherchant votre entreprise sur Google. Dans votre fiche entreprise, cliquez sur “Demander des avis” puis copiez le lien.",
-        questionEN: "How do I find my link for Google Reviews?",
-        answerEN: "1️⃣ Go to your Google Business Profile. 2️⃣ Click on “Request reviews”. 3️⃣ Copy the link generated by Google. 4️⃣ Paste this link into your SMS message in Starsloo. Your customers will then be able to leave a review with a single click. ⭐ Tip - You can also find this link by searching for your business on Google. In your business profile, click on “Request reviews” and then copy the link." 
-      },
-	  {
-        questionFR: "Les SMS sont-ils automatiques ?",
-        answerFR: "Non. Vous gardez le contrôle total. Chaque message est envoyé manuellement par vous.",
-        questionEN: "Are messages automated?",
-        answerEN: "No. You stay in full control. Every message is manually sent by you." 
-      },
-      {
-        questionFR: "Puis-je changer de plan à tout moment ?",
-        answerFR: "Oui. Vous pouvez modifier ou annuler votre abonnement directement depuis votre tableau de bord.",
-        questionEN: "Can I change my plan anytime?",
-        answerEN: "Yes. You can upgrade or cancel your subscription anytime from your dashboard."
-      },
-      {
-        questionFR: "Que se passe-t-il si je dépasse ma limite de SMS ?",
-        answerFR: "Si votre limite mensuelle est atteinte, il vous sera possible d'acheter un bloc de SMS supplémentaire ou encore passer au plan supérieur pour continuer vos envois.",
-        questionEN: "What happens if I exceed my SMS limit?",
-        answerEN: "If you reach your monthly limit, you can purchase an additional SMS block or upgrade to a higher plan to continue sending messages."
-      },
-	  {
-        questionFR: "Parcequ'on est une équipe extraordinaire, voici quelques messages déjà fait pour vous",
-        answerFR: "Bonjour {client_name}! Merci pour votre visite chez {business_name}. Votre avis compte énormément pour nous 🙏 Vous pouvez nous laisser un commentaire ici : [LIEN_AVIS_GOOGLE] - Bonjour {client_name}, suite à votre passage chez {business_name}, nous aimerions connaître votre expérience. Cela ne prend qu’une minute : [LIEN_AVIS_GOOGLE] - Merci d’avoir choisi {business_name}, {client_name}! Si vous avez apprécié votre visite, un petit avis nous aiderait beaucoup 😊 [LIEN_AVIS_GOOGLE] - Salut {client_name}! On espère que vous avez adoré votre expérience chez {business_name} 🤍 Un petit avis ici nous ferait vraiment plaisir : [LIEN_AVIS_GOOGLE]",
-        questionEN: "Because we're an extraordinary team, here are some messages already written for you.",
-        answerEN: "Hello {client_name}! Thank you for visiting {business_name}. Your opinion means a lot to us 🙏 You can leave us a review here: [GOOGLE_REVIEW_LINK] - Hello {client_name}, following your visit to {business_name}, we would like to know about your experience. It only takes a minute: [GOOGLE_REVIEW_LINK] - Thank you for choosing {business_name}, {client_name}! If you enjoyed your visit, a short review would help us a lot 😊 [GOOGLE_REVIEW_LINK] - Hi {client_name}! We hope you loved your experience at {business_name} 🤍 A short review here would really make us happy: [GOOGLE_REVIEW_LINK] - Hello {client_name}! The entire {business_name} team thanks you 🙌 If you have 30 seconds, here's the link to leave us your review: [GOOGLE_REVIEW_LINK]"
-      }
-    ].map((faq, index) => (
-      <div key={index} style={{
-        background: '#ffffff',
-        borderRadius: '14px',
-        padding: '22px 25px',
-        boxShadow: openFaq === index
-          ? '0 10px 30px rgba(0,0,0,0.08)'
-          : '0 4px 12px rgba(0,0,0,0.04)',
-        transition: 'all 0.25s ease',
-        cursor: 'pointer',
-        border: openFaq === index ? '1px solid #e5e7eb' : '1px solid #f1f1f1'
-      }}
-      onClick={() => toggleFaq(index)}
-      >
-
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <span style={{
-            fontSize: '16px',
-            fontWeight: 600,
-            color: '#111'
-          }}>
-            {lang === 'FR' ? faq.questionFR : faq.questionEN}
-          </span>
-
-          <span style={{
-            fontSize: '20px',
-            transition: 'transform 0.3s ease',
-            transform: openFaq === index ? 'rotate(45deg)' : 'rotate(0deg)',
-            color: '#666'
-          }}>
-            +
-          </span>
-        </div>
-
-        <div style={{
-          maxHeight: openFaq === index ? '300px' : '0px',
-          overflow: 'hidden',
-          transition: 'all 0.3s ease',
-          opacity: openFaq === index ? 1 : 0,
-          marginTop: openFaq === index ? '15px' : '0px',
-          color: '#555',
-          fontSize: '14px',
-          lineHeight: '1.6'
-        }}>
-          {lang === 'FR' ? faq.answerFR : faq.answerEN}
-        </div>
-
-      </div>
-    ))}
-
-  </div>
-</section>
-
- {/* LOGO */}
-      <Logo lang={lang} />
-
-      {/* FOOTER */}
-      <div className="home-footer">
-        <p>© 2026 Starsloo.com {lang === 'FR' ? 'Tous droits réservés.' : 'All rights reserved.'}</p>
-      </div>
-	  
-	  
-      {/* Plan Modal */}
-     <PlanModal
-  open={showPlanModal}
-  businessId={business?.id!}
-  onClose={() => setShowPlanModal(false)}
-  lang={lang}  // ← Ajoute cette ligne
-/>
-
-    </div>
-	 
-
+      <PlanModal open={showPlanModal} businessId={business?.id!} onClose={() => setShowPlanModal(false)} lang={lang} />
+    </main>
   )
 }
